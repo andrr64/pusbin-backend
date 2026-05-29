@@ -1,0 +1,68 @@
+package com.bsi.pusbin.config;
+
+import com.bsi.pusbin.shared.exception.AppException;
+import com.bsi.pusbin.shared.response.APIResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Slf4j
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(AppException.class)
+    public ResponseEntity<APIResponse<Void>> handleApp(AppException ex) {
+        return ResponseEntity.status(ex.getStatus())
+                .body(APIResponse.error(ex.getMessage()));
+    }
+
+    @ExceptionHandler(EmptyResultDataAccessException.class)
+    public ResponseEntity<APIResponse<Void>> handleEmptyResult(EmptyResultDataAccessException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(APIResponse.error("Resource not found"));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<APIResponse<Void>> handleIntegrity(DataIntegrityViolationException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(APIResponse.error("Resource already exists"));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<APIResponse<Void>> handleValidation(MethodArgumentNotValidException ex) {
+        List<String> errors = ex.getBindingResult().getFieldErrors().stream()
+                .map(fe -> fe.getField() + ": " + fe.getDefaultMessage())
+                .collect(Collectors.toList());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(APIResponse.error("Validation failed", errors));
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<APIResponse<Void>> handleNoResource(NoResourceFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(APIResponse.error("Endpoint not found"));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<APIResponse<Void>> handleAccessDenied(AccessDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(APIResponse.error("Forbidden"));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<APIResponse<Void>> handleGeneral(Exception ex) {
+        log.error("Unhandled exception", ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(APIResponse.error("An unexpected error occurred"));
+    }
+}

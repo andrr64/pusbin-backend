@@ -1,0 +1,3 @@
+org.springframework.boot.EnvironmentPostProcessor=\
+  com.bsi.pusbin.config.DotEnvPostProcessor
+red
