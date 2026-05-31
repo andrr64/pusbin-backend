@@ -112,7 +112,7 @@ CREATE TABLE asn (
     id_asn BIGINT PRIMARY KEY,
     id_jenis_asn INTEGER REFERENCES jenis_asn(id_jenis_asn) ON DELETE SET NULL,
     id_kedudukan INTEGER REFERENCES kedudukan_asn(id_kedudukan) ON DELETE SET NULL,
-    id_jenis_kelamin 1 INTEGER REFERENCES jenis_kelamin(id_jenis_kelamin) ON DELETE SET NULL,
+    id_jenis_kelamin INTEGER REFERENCES jenis_kelamin(id_jenis_kelamin) ON DELETE SET NULL,
     id_pendidikan INTEGER REFERENCES pendidikan(id_pendidikan) ON DELETE SET NULL,
     id_instansi INTEGER REFERENCES instansi(id_instansi) ON DELETE SET NULL,
     id_jabatan INTEGER REFERENCES jabatan(id_jabatan) ON DELETE SET NULL,
