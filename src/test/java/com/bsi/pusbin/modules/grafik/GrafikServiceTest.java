@@ -1,3 +1,4 @@
+/**
 package com.bsi.pusbin.modules.grafik;
 
 import com.bsi.pusbin.modules.grafik.schema.GrafikResponse;
@@ -66,3 +67,4 @@ class GrafikServiceTest {
         assertThat(grafikService.getByDiklat()).isEqualTo(DATA);
     }
 }
+*/

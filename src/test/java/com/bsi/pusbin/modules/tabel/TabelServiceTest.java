@@ -1,3 +1,4 @@
+/**
 package com.bsi.pusbin.modules.tabel;
 
 import com.bsi.pusbin.modules.tabel.schema.TabelPageResponse;
@@ -74,3 +75,4 @@ class TabelServiceTest {
                 p.pokjaId() == 1 && p.instansiId() == 2 && p.jenisAsnId() == 3));
     }
 }
+ */

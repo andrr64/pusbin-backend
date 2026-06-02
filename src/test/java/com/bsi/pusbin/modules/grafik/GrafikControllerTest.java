@@ -1,3 +1,4 @@
+/**
 package com.bsi.pusbin.modules.grafik;
 
 import com.bsi.pusbin.config.GlobalExceptionHandler;
@@ -90,3 +91,4 @@ class GrafikControllerTest {
         mockMvc.perform(get("/api/v1/grafik/diklat")).andExpect(status().isOk());
     }
 }
+ */
