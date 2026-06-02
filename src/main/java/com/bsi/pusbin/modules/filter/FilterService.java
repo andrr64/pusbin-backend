@@ -21,15 +21,14 @@ public class FilterService {
             4, "Utama",
             5, "Terampil",
             6, "Mahir",
-            7, "Penyelia"
-    );
+            7, "Penyelia");
     private static final Map<String, Integer> JENJANG_NAME_TO_ID;
     static {
         Map<String, Integer> map = new HashMap<>();
         JENJANG_ID_TO_NAME.forEach((id, name) -> {
             map.put(name.toLowerCase(), id);
             if (name.equalsIgnoreCase("Terampil")) {
-                map.put("trampil", id); // support variant
+                map.put("terampil", id); // support variant
             }
         });
         JENJANG_NAME_TO_ID = Collections.unmodifiableMap(map);
@@ -44,8 +43,7 @@ public class FilterService {
             5, "Kota",
             6, "KLNS",
             7, "KLN",
-            8, "Kementerian Koordinator"
-    );
+            8, "Kementerian Koordinator");
     private static final Map<String, Integer> KATEGORI_NAME_TO_ID;
     static {
         Map<String, Integer> map = new HashMap<>();
@@ -82,8 +80,8 @@ public class FilterService {
                 jenjangStr,
                 kategoriStr,
                 req.wilayahPokjaId(),
-                req.namaJabatanId()
-        );
+                req.namaJabatanId(),
+                req.jenisInstansi());
 
         // Sets to guarantee uniqueness
         Set<List<Object>> instansiSet = new HashSet<>();
@@ -93,6 +91,7 @@ public class FilterService {
         Set<List<Object>> kategoriSet = new HashSet<>();
         Set<List<Object>> pokjaSet = new HashSet<>();
         Set<List<Object>> jabatanSet = new HashSet<>();
+        Set<List<Object>> jenisInstansiSet = new HashSet<>();
 
         for (FilterRow r : rows) {
             if (r.getIdInstansi() != null && r.getNamaInstansi() != null) {
@@ -120,6 +119,11 @@ public class FilterService {
             if (r.getIdJabatan() != null && r.getNamaJabatan() != null) {
                 jabatanSet.add(List.of(r.getNamaJabatan(), r.getIdJabatan()));
             }
+            if (r.getJenisInstansi() != null) {
+                String val = r.getJenisInstansi();
+                int id = Math.abs(val.hashCode()) + 100;
+                jenisInstansiSet.add(List.of(val, id));
+            }
         }
 
         // Prepare response structure
@@ -131,6 +135,7 @@ public class FilterService {
         data.put("Kategori Instansi", sortAndConvert(kategoriSet));
         data.put("Wilayah Pokja", sortAndConvert(pokjaSet));
         data.put("Nama Jabatan", sortAndConvert(jabatanSet));
+        data.put("Jenis Instansi", sortAndConvert(jenisInstansiSet));
 
         return data;
     }

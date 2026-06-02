@@ -9,5 +9,6 @@ public record FilterRequest(
     Integer kategoriInstansiId,
     String kategoriInstansi,
     Integer wilayahPokjaId,
-    Integer namaJabatanId
+    Integer namaJabatanId,
+    String jenisInstansi
 ) {}
