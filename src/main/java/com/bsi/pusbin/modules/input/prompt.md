@@ -34,3 +34,16 @@ MK JABATAN: date disimpan ke asn.masa_kerja_jabatan (INTEGER).
 
 - Di Tampilan Form Frontend: Menyediakan 26 field inputan/dropdown lengkap agar sesuai dengan format kolom Excel yang biasa digunakan pengguna.
 - Di Sisi Database Backend: Data dari 26 field form tersebut akan divalidasi dan disimpan ke dalam tabel asn yang hanya memiliki 13 kolom relasi Foreign Key ke tabel master terkait.
+
+
+Aku mau mengubah beberapa input manual (teks biasa) menjadi komponen Select Box (Dropdown) yang datanya dinamis diambil dari database. 
+
+Saya ingin mengubah seluruh kolom inputnya menjadi dropdown
+
+Saya sudah menyiapkan semua file terkait yang dibutuhkan. Tolong buatkan perubahan kodenya secara lengkap untuk sisi backend dan frontend.
+
+Tolong berikan arahan modifikasi kode untuk:
+- Membuat endpoint GET baru di Java Controller untuk menyediakan opsi pilihan dinamis.
+- Membuat DTO/Schema Response baru di Java untuk struktur data option (label & value).
+- Membuat custom hook React Query baru di Frontend untuk mengambil data tersebut.
+- Mengubah komponen InputField menjadi SelectBox dinamis di file page.tsx.
