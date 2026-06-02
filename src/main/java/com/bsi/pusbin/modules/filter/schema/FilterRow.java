@@ -16,4 +16,5 @@ public class FilterRow {
     private String namaPokja;
     private Integer idJabatan;
     private String namaJabatan;
+    private String jenisInstansi;
 }

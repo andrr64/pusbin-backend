@@ -21,25 +21,26 @@ public class FilterRepository {
             String jenjang,
             String kategori,
             Integer wilayahPokjaId,
-            Integer namaJabatanId) {
+            Integer namaJabatanId,
+            String jenisInstansi) {
 
         StringBuilder sql = new StringBuilder("""
-            SELECT DISTINCT
-                asn.id_instansi, instansi.nama_instansi, instansi.kategori,
-                asn.id_jenis_asn, jenis_asn.nama_jenis,
-                jabatan.id_nomenklatur, nomenklatur.nama_nomenklatur,
-                jabatan.jenjang,
-                wilayah_bkn.id_wilayah_pokja, wilayah_pokja.nama_pokja,
-                asn.id_jabatan, jabatan.nama_jabatan
-            FROM asn
-            LEFT JOIN instansi ON asn.id_instansi = instansi.id_instansi
-            LEFT JOIN jenis_asn ON asn.id_jenis_asn = jenis_asn.id_jenis_asn
-            LEFT JOIN jabatan ON asn.id_jabatan = jabatan.id_jabatan
-            LEFT JOIN nomenklatur ON jabatan.id_nomenklatur = nomenklatur.id_nomenklatur
-            LEFT JOIN wilayah_bkn ON instansi.id_wilker = wilayah_bkn.id_wilker
-            LEFT JOIN wilayah_pokja ON wilayah_bkn.id_wilayah_pokja = wilayah_pokja.id_wilayah_pokja
-            WHERE 1=1
-        """);
+                    SELECT DISTINCT
+                        asn.id_instansi, instansi.nama_instansi, instansi.kategori,
+                        asn.id_jenis_asn, jenis_asn.nama_jenis,
+                        jabatan.id_nomenklatur, nomenklatur.nama_nomenklatur,
+                        jabatan.jenjang,
+                        wilayah_bkn.id_wilayah_pokja, wilayah_pokja.nama_pokja,
+                        asn.id_jabatan, jabatan.nama_jabatan, instansi.jenis_instansi
+                    FROM asn
+                    LEFT JOIN instansi ON asn.id_instansi = instansi.id_instansi
+                    LEFT JOIN jenis_asn ON asn.id_jenis_asn = jenis_asn.id_jenis_asn
+                    LEFT JOIN jabatan ON asn.id_jabatan = jabatan.id_jabatan
+                    LEFT JOIN nomenklatur ON jabatan.id_nomenklatur = nomenklatur.id_nomenklatur
+                    LEFT JOIN wilayah_bkn ON instansi.id_wilker = wilayah_bkn.id_wilker
+                    LEFT JOIN wilayah_pokja ON wilayah_bkn.id_wilayah_pokja = wilayah_pokja.id_wilayah_pokja
+                    WHERE 1=1
+                """);
 
         MapSqlParameterSource params = new MapSqlParameterSource();
 
@@ -71,6 +72,10 @@ public class FilterRepository {
             sql.append(" AND asn.id_jabatan = :namaJabatanId");
             params.addValue("namaJabatanId", namaJabatanId);
         }
+        if (jenisInstansi != null) {
+            sql.append(" AND instansi.jenis_instansi = :jenisInstansi");
+            params.addValue("jenisInstansi", jenisInstansi);
+        }
 
         return jdbc.query(sql.toString(), params, (rs, rowNum) -> {
             FilterRow r = new FilterRow();
@@ -86,6 +91,7 @@ public class FilterRepository {
             r.setNamaPokja(rs.getString("nama_pokja"));
             r.setIdJabatan(getInteger(rs, "id_jabatan"));
             r.setNamaJabatan(rs.getString("nama_jabatan"));
+            r.setJenisInstansi(rs.getString("jenis_instansi"));
             return r;
         });
     }
