@@ -24,23 +24,53 @@ public class TableService {
     );
 
     private Criteria resolveCriteria(FilterRequest req) {
-        String jenjangStr = req.jenjang();
-        if (jenjangStr == null && req.jenjangId() != null) {
-            jenjangStr = JENJANG_ID_TO_NAME.get(req.jenjangId());
+        List<String> jenjangList = req.jenjang() != null ? new ArrayList<>(req.jenjang()) : new ArrayList<>();
+        if (req.jenjangId() != null) {
+            for (Integer id : req.jenjangId()) {
+                String name = JENJANG_ID_TO_NAME.get(id);
+                if (name != null) {
+                    jenjangList.add(name);
+                }
+            }
         }
 
-        String kategoriStr = req.kategoriInstansi();
-        if (kategoriStr == null && req.kategoriInstansiId() != null) {
-            kategoriStr = KATEGORI_ID_TO_NAME.get(req.kategoriInstansiId());
+        List<String> kategoriList = req.kategoriInstansi() != null ? new ArrayList<>(req.kategoriInstansi()) : new ArrayList<>();
+        if (req.kategoriInstansiId() != null) {
+            for (Integer id : req.kategoriInstansiId()) {
+                String name = KATEGORI_ID_TO_NAME.get(id);
+                if (name != null) {
+                    kategoriList.add(name);
+                }
+            }
         }
 
-        return new Criteria(req.instansiId(), req.jenisAsnId(), req.nomenklaturId(), jenjangStr, kategoriStr, req.wilayahPokjaId(), req.namaJabatanId());
+        List<String> jenisInstansiList = req.jenisInstansi() != null ? new ArrayList<>(req.jenisInstansi()) : new ArrayList<>();
+        if (req.jenisInstansiId() != null) {
+            for (Integer id : req.jenisInstansiId()) {
+                if (id == Math.abs("Instansi Pusat".hashCode()) + 100) {
+                    jenisInstansiList.add("Instansi Pusat");
+                } else if (id == Math.abs("Instansi Daerah".hashCode()) + 100) {
+                    jenisInstansiList.add("Instansi Daerah");
+                }
+            }
+        }
+
+        return new Criteria(
+                req.instansiId(),
+                req.jenisAsnId(),
+                req.nomenklaturId(),
+                jenjangList,
+                kategoriList,
+                req.wilayahPokjaId(),
+                req.namaJabatanId(),
+                jenisInstansiList
+        );
     }
 
     public List<List<Object>> getWilayahKerjaTable(FilterRequest req) {
         Criteria c = resolveCriteria(req);
         List<TableDataRow> data = tableRepository.getWilayahKerjaData(
-                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId
+                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi
         );
 
         List<List<Object>> result = new ArrayList<>();
@@ -54,7 +84,7 @@ public class TableService {
     public List<List<Object>> getJabatanTable(FilterRequest req) {
         Criteria c = resolveCriteria(req);
         List<TableDataRow> data = tableRepository.getJabatanData(
-                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId
+                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi
         );
 
         List<List<Object>> result = new ArrayList<>();
@@ -68,7 +98,7 @@ public class TableService {
     public List<List<Object>> getPendidikanTable(FilterRequest req) {
         Criteria c = resolveCriteria(req);
         List<TableDataRow> data = tableRepository.getPendidikanData(
-                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId
+                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi
         );
 
         long total = 0;
@@ -89,7 +119,7 @@ public class TableService {
     public List<List<Object>> getInstansiTable(FilterRequest req) {
         Criteria c = resolveCriteria(req);
         List<TableDataRow> data = tableRepository.getInstansiData(
-                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId
+                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi
         );
 
         List<List<Object>> result = new ArrayList<>();
@@ -101,7 +131,8 @@ public class TableService {
     }
 
     private record Criteria(
-            Integer instansiId, Integer jenisAsnId, Integer nomenklaturId,
-            String jenjang, String kategori, Integer wilayahPokjaId, Integer namaJabatanId
+            List<Integer> instansiId, List<Integer> jenisAsnId, List<Integer> nomenklaturId,
+            List<String> jenjang, List<String> kategori, List<Integer> wilayahPokjaId, List<Integer> namaJabatanId,
+            List<String> jenisInstansi
     ) {}
 }

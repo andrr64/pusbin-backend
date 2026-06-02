@@ -15,14 +15,14 @@ public class FilterRepository {
     private final NamedParameterJdbcTemplate jdbc;
 
     public List<FilterRow> fetchFilterRows(
-            Integer instansiId,
-            Integer jenisAsnId,
-            Integer nomenklaturId,
-            String jenjang,
-            String kategori,
-            Integer wilayahPokjaId,
-            Integer namaJabatanId,
-            String jenisInstansi) {
+            List<Integer> instansiId,
+            List<Integer> jenisAsnId,
+            List<Integer> nomenklaturId,
+            List<String> jenjang,
+            List<String> kategori,
+            List<Integer> wilayahPokjaId,
+            List<Integer> namaJabatanId,
+            List<String> jenisInstansi) {
 
         StringBuilder sql = new StringBuilder("""
                     SELECT DISTINCT
@@ -44,36 +44,36 @@ public class FilterRepository {
 
         MapSqlParameterSource params = new MapSqlParameterSource();
 
-        if (instansiId != null) {
-            sql.append(" AND asn.id_instansi = :instansiId");
+        if (instansiId != null && !instansiId.isEmpty()) {
+            sql.append(" AND asn.id_instansi IN (:instansiId)");
             params.addValue("instansiId", instansiId);
         }
-        if (jenisAsnId != null) {
-            sql.append(" AND asn.id_jenis_asn = :jenisAsnId");
+        if (jenisAsnId != null && !jenisAsnId.isEmpty()) {
+            sql.append(" AND asn.id_jenis_asn IN (:jenisAsnId)");
             params.addValue("jenisAsnId", jenisAsnId);
         }
-        if (nomenklaturId != null) {
-            sql.append(" AND jabatan.id_nomenklatur = :nomenklaturId");
+        if (nomenklaturId != null && !nomenklaturId.isEmpty()) {
+            sql.append(" AND jabatan.id_nomenklatur IN (:nomenklaturId)");
             params.addValue("nomenklaturId", nomenklaturId);
         }
-        if (jenjang != null) {
-            sql.append(" AND jabatan.jenjang = :jenjang");
+        if (jenjang != null && !jenjang.isEmpty()) {
+            sql.append(" AND jabatan.jenjang IN (:jenjang)");
             params.addValue("jenjang", jenjang);
         }
-        if (kategori != null) {
-            sql.append(" AND instansi.kategori = :kategori");
+        if (kategori != null && !kategori.isEmpty()) {
+            sql.append(" AND instansi.kategori IN (:kategori)");
             params.addValue("kategori", kategori);
         }
-        if (wilayahPokjaId != null) {
-            sql.append(" AND wilayah_bkn.id_wilayah_pokja = :wilayahPokjaId");
+        if (wilayahPokjaId != null && !wilayahPokjaId.isEmpty()) {
+            sql.append(" AND wilayah_bkn.id_wilayah_pokja IN (:wilayahPokjaId)");
             params.addValue("wilayahPokjaId", wilayahPokjaId);
         }
-        if (namaJabatanId != null) {
-            sql.append(" AND asn.id_jabatan = :namaJabatanId");
+        if (namaJabatanId != null && !namaJabatanId.isEmpty()) {
+            sql.append(" AND asn.id_jabatan IN (:namaJabatanId)");
             params.addValue("namaJabatanId", namaJabatanId);
         }
-        if (jenisInstansi != null) {
-            sql.append(" AND instansi.jenis_instansi = :jenisInstansi");
+        if (jenisInstansi != null && !jenisInstansi.isEmpty()) {
+            sql.append(" AND instansi.jenis_instansi IN (:jenisInstansi)");
             params.addValue("jenisInstansi", jenisInstansi);
         }
 

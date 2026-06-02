@@ -15,41 +15,47 @@ public class TableRepository {
     private final NamedParameterJdbcTemplate jdbc;
 
     private void appendFilters(StringBuilder sql, MapSqlParameterSource params,
-                               Integer instansiId, Integer jenisAsnId, Integer nomenklaturId,
-                               String jenjang, String kategori, Integer wilayahPokjaId, Integer namaJabatanId) {
-        if (instansiId != null) {
-            sql.append(" AND a.id_instansi = :instansiId");
+                               List<Integer> instansiId, List<Integer> jenisAsnId, List<Integer> nomenklaturId,
+                               List<String> jenjang, List<String> kategori, List<Integer> wilayahPokjaId, List<Integer> namaJabatanId,
+                               List<String> jenisInstansi) {
+        if (instansiId != null && !instansiId.isEmpty()) {
+            sql.append(" AND a.id_instansi IN (:instansiId)");
             params.addValue("instansiId", instansiId);
         }
-        if (jenisAsnId != null) {
-            sql.append(" AND a.id_jenis_asn = :jenisAsnId");
+        if (jenisAsnId != null && !jenisAsnId.isEmpty()) {
+            sql.append(" AND a.id_jenis_asn IN (:jenisAsnId)");
             params.addValue("jenisAsnId", jenisAsnId);
         }
-        if (nomenklaturId != null) {
-            sql.append(" AND j.id_nomenklatur = :nomenklaturId");
+        if (nomenklaturId != null && !nomenklaturId.isEmpty()) {
+            sql.append(" AND j.id_nomenklatur IN (:nomenklaturId)");
             params.addValue("nomenklaturId", nomenklaturId);
         }
-        if (jenjang != null) {
-            sql.append(" AND j.jenjang = :jenjang");
+        if (jenjang != null && !jenjang.isEmpty()) {
+            sql.append(" AND j.jenjang IN (:jenjang)");
             params.addValue("jenjang", jenjang);
         }
-        if (kategori != null) {
-            sql.append(" AND i.kategori = :kategori");
+        if (kategori != null && !kategori.isEmpty()) {
+            sql.append(" AND i.kategori IN (:kategori)");
             params.addValue("kategori", kategori);
         }
-        if (wilayahPokjaId != null) {
-            sql.append(" AND w.id_wilayah_pokja = :wilayahPokjaId");
+        if (wilayahPokjaId != null && !wilayahPokjaId.isEmpty()) {
+            sql.append(" AND w.id_wilayah_pokja IN (:wilayahPokjaId)");
             params.addValue("wilayahPokjaId", wilayahPokjaId);
         }
-        if (namaJabatanId != null) {
-            sql.append(" AND a.id_jabatan = :namaJabatanId");
+        if (namaJabatanId != null && !namaJabatanId.isEmpty()) {
+            sql.append(" AND a.id_jabatan IN (:namaJabatanId)");
             params.addValue("namaJabatanId", namaJabatanId);
+        }
+        if (jenisInstansi != null && !jenisInstansi.isEmpty()) {
+            sql.append(" AND i.jenis_instansi IN (:jenisInstansi)");
+            params.addValue("jenisInstansi", jenisInstansi);
         }
     }
 
     public List<TableDataRow> getWilayahKerjaData(
-            Integer instansiId, Integer jenisAsnId, Integer nomenklaturId,
-            String jenjang, String kategori, Integer wilayahPokjaId, Integer namaJabatanId) {
+            List<Integer> instansiId, List<Integer> jenisAsnId, List<Integer> nomenklaturId,
+            List<String> jenjang, List<String> kategori, List<Integer> wilayahPokjaId, List<Integer> namaJabatanId,
+            List<String> jenisInstansi) {
 
         StringBuilder sql = new StringBuilder("""
             SELECT 
@@ -63,7 +69,7 @@ public class TableRepository {
         """);
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId);
+        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId, jenisInstansi);
 
         sql.append(" GROUP BY w.nama_wilker ORDER BY count DESC, label ASC");
 
@@ -73,8 +79,9 @@ public class TableRepository {
     }
 
     public List<TableDataRow> getJabatanData(
-            Integer instansiId, Integer jenisAsnId, Integer nomenklaturId,
-            String jenjang, String kategori, Integer wilayahPokjaId, Integer namaJabatanId) {
+            List<Integer> instansiId, List<Integer> jenisAsnId, List<Integer> nomenklaturId,
+            List<String> jenjang, List<String> kategori, List<Integer> wilayahPokjaId, List<Integer> namaJabatanId,
+            List<String> jenisInstansi) {
 
         StringBuilder sql = new StringBuilder("""
             SELECT 
@@ -88,7 +95,7 @@ public class TableRepository {
         """);
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId);
+        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId, jenisInstansi);
 
         sql.append(" GROUP BY j.nama_jabatan, j.jenjang ORDER BY count DESC, label ASC");
 
@@ -98,8 +105,9 @@ public class TableRepository {
     }
 
     public List<TableDataRow> getPendidikanData(
-            Integer instansiId, Integer jenisAsnId, Integer nomenklaturId,
-            String jenjang, String kategori, Integer wilayahPokjaId, Integer namaJabatanId) {
+            List<Integer> instansiId, List<Integer> jenisAsnId, List<Integer> nomenklaturId,
+            List<String> jenjang, List<String> kategori, List<Integer> wilayahPokjaId, List<Integer> namaJabatanId,
+            List<String> jenisInstansi) {
 
         StringBuilder sql = new StringBuilder("""
             SELECT 
@@ -114,7 +122,7 @@ public class TableRepository {
         """);
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId);
+        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId, jenisInstansi);
 
         sql.append(" GROUP BY p.nama_pendidikan ORDER BY count DESC, label ASC");
 
@@ -124,8 +132,9 @@ public class TableRepository {
     }
 
     public List<TableDataRow> getInstansiData(
-            Integer instansiId, Integer jenisAsnId, Integer nomenklaturId,
-            String jenjang, String kategori, Integer wilayahPokjaId, Integer namaJabatanId) {
+            List<Integer> instansiId, List<Integer> jenisAsnId, List<Integer> nomenklaturId,
+            List<String> jenjang, List<String> kategori, List<Integer> wilayahPokjaId, List<Integer> namaJabatanId,
+            List<String> jenisInstansi) {
 
         StringBuilder sql = new StringBuilder("""
             SELECT 
@@ -139,7 +148,7 @@ public class TableRepository {
         """);
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId);
+        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId, jenisInstansi);
 
         sql.append(" GROUP BY i.nama_instansi ORDER BY count DESC, label ASC");
 

@@ -61,64 +61,126 @@ public class FilterService {
 
     public Map<String, List<List<Object>>> getDynamicFilters(FilterRequest req) {
         // Resolve Jenjang
-        String jenjangStr = req.jenjang();
-        if (jenjangStr == null && req.jenjangId() != null) {
-            jenjangStr = JENJANG_ID_TO_NAME.get(req.jenjangId());
+        List<String> jenjangList = req.jenjang() != null ? new ArrayList<>(req.jenjang()) : new ArrayList<>();
+        if (req.jenjangId() != null) {
+            for (Integer id : req.jenjangId()) {
+                String name = JENJANG_ID_TO_NAME.get(id);
+                if (name != null) {
+                    jenjangList.add(name);
+                }
+            }
         }
 
         // Resolve Kategori Instansi
-        String kategoriStr = req.kategoriInstansi();
-        if (kategoriStr == null && req.kategoriInstansiId() != null) {
-            kategoriStr = KATEGORI_ID_TO_NAME.get(req.kategoriInstansiId());
+        List<String> kategoriList = req.kategoriInstansi() != null ? new ArrayList<>(req.kategoriInstansi()) : new ArrayList<>();
+        if (req.kategoriInstansiId() != null) {
+            for (Integer id : req.kategoriInstansiId()) {
+                String name = KATEGORI_ID_TO_NAME.get(id);
+                if (name != null) {
+                    kategoriList.add(name);
+                }
+            }
         }
 
-        // Fetch matching combinations
-        List<FilterRow> rows = filterRepository.fetchFilterRows(
-                req.instansiId(),
-                req.jenisAsnId(),
-                req.nomenklaturId(),
-                jenjangStr,
-                kategoriStr,
-                req.wilayahPokjaId(),
-                req.namaJabatanId(),
-                req.jenisInstansi());
+        // Resolve Jenis Instansi
+        List<String> jenisInstansiList = req.jenisInstansi() != null ? new ArrayList<>(req.jenisInstansi()) : new ArrayList<>();
+        if (req.jenisInstansiId() != null) {
+            for (Integer id : req.jenisInstansiId()) {
+                if (id == Math.abs("Instansi Pusat".hashCode()) + 100) {
+                    jenisInstansiList.add("Instansi Pusat");
+                } else if (id == Math.abs("Instansi Daerah".hashCode()) + 100) {
+                    jenisInstansiList.add("Instansi Daerah");
+                }
+            }
+        }
 
-        // Sets to guarantee uniqueness
+        // 1. Fetch Instansi options (exclude instansiId filter)
         Set<List<Object>> instansiSet = new HashSet<>();
-        Set<List<Object>> jenisAsnSet = new HashSet<>();
-        Set<List<Object>> nomenklaturSet = new HashSet<>();
-        Set<List<Object>> jenjangSet = new HashSet<>();
-        Set<List<Object>> kategoriSet = new HashSet<>();
-        Set<List<Object>> pokjaSet = new HashSet<>();
-        Set<List<Object>> jabatanSet = new HashSet<>();
-        Set<List<Object>> jenisInstansiSet = new HashSet<>();
-
-        for (FilterRow r : rows) {
+        List<FilterRow> instansiRows = filterRepository.fetchFilterRows(
+                null, req.jenisAsnId(), req.nomenklaturId(), jenjangList, kategoriList, req.wilayahPokjaId(), req.namaJabatanId(), jenisInstansiList
+        );
+        for (FilterRow r : instansiRows) {
             if (r.getIdInstansi() != null && r.getNamaInstansi() != null) {
                 instansiSet.add(List.of(r.getNamaInstansi(), r.getIdInstansi()));
             }
+        }
+
+        // 2. Fetch Jenis ASN options (exclude jenisAsnId filter)
+        Set<List<Object>> jenisAsnSet = new HashSet<>();
+        List<FilterRow> jenisAsnRows = filterRepository.fetchFilterRows(
+                req.instansiId(), null, req.nomenklaturId(), jenjangList, kategoriList, req.wilayahPokjaId(), req.namaJabatanId(), jenisInstansiList
+        );
+        for (FilterRow r : jenisAsnRows) {
             if (r.getIdJenisAsn() != null && r.getNamaJenis() != null) {
                 jenisAsnSet.add(List.of(r.getNamaJenis(), r.getIdJenisAsn()));
             }
+        }
+
+        // 3. Fetch Nomenklatur options (exclude nomenklaturId filter)
+        Set<List<Object>> nomenklaturSet = new HashSet<>();
+        List<FilterRow> nomenklaturRows = filterRepository.fetchFilterRows(
+                req.instansiId(), req.jenisAsnId(), null, jenjangList, kategoriList, req.wilayahPokjaId(), req.namaJabatanId(), jenisInstansiList
+        );
+        for (FilterRow r : nomenklaturRows) {
             if (r.getIdNomenklatur() != null && r.getNamaNomenklatur() != null) {
                 nomenklaturSet.add(List.of(r.getNamaNomenklatur(), r.getIdNomenklatur()));
             }
+        }
+
+        // 4. Fetch Jenjang options (exclude jenjang list/id filter)
+        Set<List<Object>> jenjangSet = new HashSet<>();
+        List<FilterRow> jenjangRows = filterRepository.fetchFilterRows(
+                req.instansiId(), req.jenisAsnId(), req.nomenklaturId(), null, kategoriList, req.wilayahPokjaId(), req.namaJabatanId(), jenisInstansiList
+        );
+        for (FilterRow r : jenjangRows) {
             if (r.getJenjang() != null) {
                 String val = r.getJenjang();
                 int id = JENJANG_NAME_TO_ID.getOrDefault(val.toLowerCase(), Math.abs(val.hashCode()) + 100);
                 jenjangSet.add(List.of(val, id));
             }
+        }
+
+        // 5. Fetch Kategori Instansi options (exclude kategori list/id filter)
+        Set<List<Object>> kategoriSet = new HashSet<>();
+        List<FilterRow> kategoriRows = filterRepository.fetchFilterRows(
+                req.instansiId(), req.jenisAsnId(), req.nomenklaturId(), jenjangList, null, req.wilayahPokjaId(), req.namaJabatanId(), jenisInstansiList
+        );
+        for (FilterRow r : kategoriRows) {
             if (r.getKategori() != null) {
                 String val = r.getKategori();
                 int id = KATEGORI_NAME_TO_ID.getOrDefault(val.toLowerCase(), Math.abs(val.hashCode()) + 100);
                 kategoriSet.add(List.of(val, id));
             }
+        }
+
+        // 6. Fetch Wilayah Pokja options (exclude wilayahPokjaId filter)
+        Set<List<Object>> pokjaSet = new HashSet<>();
+        List<FilterRow> pokjaRows = filterRepository.fetchFilterRows(
+                req.instansiId(), req.jenisAsnId(), req.nomenklaturId(), jenjangList, kategoriList, null, req.namaJabatanId(), jenisInstansiList
+        );
+        for (FilterRow r : pokjaRows) {
             if (r.getIdWilayahPokja() != null && r.getNamaPokja() != null) {
                 pokjaSet.add(List.of(r.getNamaPokja(), r.getIdWilayahPokja()));
             }
+        }
+
+        // 7. Fetch Nama Jabatan options (exclude namaJabatanId filter)
+        Set<List<Object>> jabatanSet = new HashSet<>();
+        List<FilterRow> jabatanRows = filterRepository.fetchFilterRows(
+                req.instansiId(), req.jenisAsnId(), req.nomenklaturId(), jenjangList, kategoriList, req.wilayahPokjaId(), null, jenisInstansiList
+        );
+        for (FilterRow r : jabatanRows) {
             if (r.getIdJabatan() != null && r.getNamaJabatan() != null) {
                 jabatanSet.add(List.of(r.getNamaJabatan(), r.getIdJabatan()));
             }
+        }
+
+        // 8. Fetch Jenis Instansi options (exclude jenisInstansi list/id filter)
+        Set<List<Object>> jenisInstansiSet = new HashSet<>();
+        List<FilterRow> jenisInstansiRows = filterRepository.fetchFilterRows(
+                req.instansiId(), req.jenisAsnId(), req.nomenklaturId(), jenjangList, kategoriList, req.wilayahPokjaId(), req.namaJabatanId(), null
+        );
+        for (FilterRow r : jenisInstansiRows) {
             if (r.getJenisInstansi() != null) {
                 String val = r.getJenisInstansi();
                 int id = Math.abs(val.hashCode()) + 100;

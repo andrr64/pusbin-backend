@@ -15,57 +15,63 @@ public class GrafikRepository {
     private final NamedParameterJdbcTemplate jdbc;
 
     private void appendFilters(StringBuilder sql, MapSqlParameterSource params,
-                               Integer instansiId, Integer jenisAsnId, Integer nomenklaturId,
-                               String jenjang, String kategori, Integer wilayahPokjaId, Integer namaJabatanId) {
-        if (instansiId != null) {
-            sql.append(" AND a.id_instansi = :instansiId");
+                               List<Integer> instansiId, List<Integer> jenisAsnId, List<Integer> nomenklaturId,
+                               List<String> jenjang, List<String> kategori, List<Integer> wilayahPokjaId, List<Integer> namaJabatanId,
+                               List<String> jenisInstansi) {
+        if (instansiId != null && !instansiId.isEmpty()) {
+            sql.append(" AND a.id_instansi IN (:instansiId)");
             params.addValue("instansiId", instansiId);
         }
-        if (jenisAsnId != null) {
-            sql.append(" AND a.id_jenis_asn = :jenisAsnId");
+        if (jenisAsnId != null && !jenisAsnId.isEmpty()) {
+            sql.append(" AND a.id_jenis_asn IN (:jenisAsnId)");
             params.addValue("jenisAsnId", jenisAsnId);
         }
-        if (nomenklaturId != null) {
-            sql.append(" AND j.id_nomenklatur = :nomenklaturId");
+        if (nomenklaturId != null && !nomenklaturId.isEmpty()) {
+            sql.append(" AND j.id_nomenklatur IN (:nomenklaturId)");
             params.addValue("nomenklaturId", nomenklaturId);
         }
-        if (jenjang != null) {
-            sql.append(" AND j.jenjang = :jenjang");
+        if (jenjang != null && !jenjang.isEmpty()) {
+            sql.append(" AND j.jenjang IN (:jenjang)");
             params.addValue("jenjang", jenjang);
         }
-        if (kategori != null) {
-            sql.append(" AND i.kategori = :kategori");
+        if (kategori != null && !kategori.isEmpty()) {
+            sql.append(" AND i.kategori IN (:kategori)");
             params.addValue("kategori", kategori);
         }
-        if (wilayahPokjaId != null) {
-            sql.append(" AND w.id_wilayah_pokja = :wilayahPokjaId");
+        if (wilayahPokjaId != null && !wilayahPokjaId.isEmpty()) {
+            sql.append(" AND w.id_wilayah_pokja IN (:wilayahPokjaId)");
             params.addValue("wilayahPokjaId", wilayahPokjaId);
         }
-        if (namaJabatanId != null) {
-            sql.append(" AND a.id_jabatan = :namaJabatanId");
+        if (namaJabatanId != null && !namaJabatanId.isEmpty()) {
+            sql.append(" AND a.id_jabatan IN (:namaJabatanId)");
             params.addValue("namaJabatanId", namaJabatanId);
+        }
+        if (jenisInstansi != null && !jenisInstansi.isEmpty()) {
+            sql.append(" AND i.jenis_instansi IN (:jenisInstansi)");
+            params.addValue("jenisInstansi", jenisInstansi);
         }
     }
 
     private void appendFiltersForTrend(StringBuilder sql, MapSqlParameterSource params,
-                                      Integer nomenklaturId, String jenjang, Integer namaJabatanId) {
-        if (nomenklaturId != null) {
-            sql.append(" AND j.id_nomenklatur = :nomenklaturId");
+                                      List<Integer> nomenklaturId, List<String> jenjang, List<Integer> namaJabatanId) {
+        if (nomenklaturId != null && !nomenklaturId.isEmpty()) {
+            sql.append(" AND j.id_nomenklatur IN (:nomenklaturId)");
             params.addValue("nomenklaturId", nomenklaturId);
         }
-        if (jenjang != null) {
-            sql.append(" AND j.jenjang = :jenjang");
+        if (jenjang != null && !jenjang.isEmpty()) {
+            sql.append(" AND j.jenjang IN (:jenjang)");
             params.addValue("jenjang", jenjang);
         }
-        if (namaJabatanId != null) {
-            sql.append(" AND t.id_jabatan = :namaJabatanId");
+        if (namaJabatanId != null && !namaJabatanId.isEmpty()) {
+            sql.append(" AND t.id_jabatan IN (:namaJabatanId)");
             params.addValue("namaJabatanId", namaJabatanId);
         }
     }
 
     public List<RawChartRow> getSebaranAsnJenjang(
-            Integer instansiId, Integer jenisAsnId, Integer nomenklaturId,
-            String jenjang, String kategori, Integer wilayahPokjaId, Integer namaJabatanId) {
+            List<Integer> instansiId, List<Integer> jenisAsnId, List<Integer> nomenklaturId,
+            List<String> jenjang, List<String> kategori, List<Integer> wilayahPokjaId, List<Integer> namaJabatanId,
+            List<String> jenisInstansi) {
 
         StringBuilder sql = new StringBuilder("""
             SELECT 
@@ -81,7 +87,7 @@ public class GrafikRepository {
         """);
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId);
+        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId, jenisInstansi);
 
         sql.append(" GROUP BY j.jenjang, ja.nama_jenis");
 
@@ -91,8 +97,9 @@ public class GrafikRepository {
     }
 
     public List<RawChartRow> getPersentaseGender(
-            Integer instansiId, Integer jenisAsnId, Integer nomenklaturId,
-            String jenjang, String kategori, Integer wilayahPokjaId, Integer namaJabatanId) {
+            List<Integer> instansiId, List<Integer> jenisAsnId, List<Integer> nomenklaturId,
+            List<String> jenjang, List<String> kategori, List<Integer> wilayahPokjaId, List<Integer> namaJabatanId,
+            List<String> jenisInstansi) {
 
         StringBuilder sql = new StringBuilder("""
             SELECT 
@@ -108,7 +115,7 @@ public class GrafikRepository {
         """);
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId);
+        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId, jenisInstansi);
 
         sql.append(" GROUP BY jk.nama_kelamin");
 
@@ -118,8 +125,9 @@ public class GrafikRepository {
     }
 
     public List<RawChartRow> getPersentaseAsnJfMasn(
-            Integer instansiId, Integer jenisAsnId, Integer nomenklaturId,
-            String jenjang, String kategori, Integer wilayahPokjaId, Integer namaJabatanId) {
+            List<Integer> instansiId, List<Integer> jenisAsnId, List<Integer> nomenklaturId,
+            List<String> jenjang, List<String> kategori, List<Integer> wilayahPokjaId, List<Integer> namaJabatanId,
+            List<String> jenisInstansi) {
 
         StringBuilder sql = new StringBuilder("""
             SELECT 
@@ -135,7 +143,7 @@ public class GrafikRepository {
         """);
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId);
+        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId, jenisInstansi);
 
         sql.append(" GROUP BY ja.nama_jenis");
 
@@ -145,8 +153,9 @@ public class GrafikRepository {
     }
 
     public List<RawChartRow> getSebaranAsnJfmasnInstansi(
-            Integer instansiId, Integer jenisAsnId, Integer nomenklaturId,
-            String jenjang, String kategori, Integer wilayahPokjaId, Integer namaJabatanId) {
+            List<Integer> instansiId, List<Integer> jenisAsnId, List<Integer> nomenklaturId,
+            List<String> jenjang, List<String> kategori, List<Integer> wilayahPokjaId, List<Integer> namaJabatanId,
+            List<String> jenisInstansi) {
 
         StringBuilder sql = new StringBuilder("""
             SELECT 
@@ -162,7 +171,7 @@ public class GrafikRepository {
         """);
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId);
+        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId, jenisInstansi);
 
         sql.append(" GROUP BY i.jenis_instansi, ja.nama_jenis");
 
@@ -172,8 +181,9 @@ public class GrafikRepository {
     }
 
     public List<RawChartRow> getSebaranAsnKlpd(
-            Integer instansiId, Integer jenisAsnId, Integer nomenklaturId,
-            String jenjang, String kategori, Integer wilayahPokjaId, Integer namaJabatanId) {
+            List<Integer> instansiId, List<Integer> jenisAsnId, List<Integer> nomenklaturId,
+            List<String> jenjang, List<String> kategori, List<Integer> wilayahPokjaId, List<Integer> namaJabatanId,
+            List<String> jenisInstansi) {
 
         StringBuilder sql = new StringBuilder("""
             SELECT 
@@ -189,7 +199,7 @@ public class GrafikRepository {
         """);
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId);
+        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId, jenisInstansi);
 
         sql.append(" GROUP BY i.kategori, ja.nama_jenis");
 
@@ -199,8 +209,9 @@ public class GrafikRepository {
     }
 
     public List<RawChartRow> getSebaranAsnJabatan(
-            Integer instansiId, Integer jenisAsnId, Integer nomenklaturId,
-            String jenjang, String kategori, Integer wilayahPokjaId, Integer namaJabatanId) {
+            List<Integer> instansiId, List<Integer> jenisAsnId, List<Integer> nomenklaturId,
+            List<String> jenjang, List<String> kategori, List<Integer> wilayahPokjaId, List<Integer> namaJabatanId,
+            List<String> jenisInstansi) {
 
         StringBuilder sql = new StringBuilder("""
             SELECT 
@@ -216,7 +227,7 @@ public class GrafikRepository {
         """);
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId);
+        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId, jenisInstansi);
 
         sql.append(" GROUP BY j.nama_jabatan, ja.nama_jenis");
 
@@ -225,7 +236,7 @@ public class GrafikRepository {
         );
     }
 
-   public List<RawChartRow> getTrenKenaikanJf(Integer namaJabatanId) {
+   public List<RawChartRow> getTrenKenaikanJf(List<Integer> namaJabatanId) {
 
     StringBuilder sql = new StringBuilder("""
         SELECT
@@ -240,8 +251,8 @@ public class GrafikRepository {
 
     MapSqlParameterSource params = new MapSqlParameterSource();
 
-    if (namaJabatanId != null) {
-        sql.append(" AND t.id_jabatan = :namaJabatanId");
+    if (namaJabatanId != null && !namaJabatanId.isEmpty()) {
+        sql.append(" AND t.id_jabatan IN (:namaJabatanId)");
         params.addValue("namaJabatanId", namaJabatanId);
     }
 
@@ -257,9 +268,11 @@ public class GrafikRepository {
         )
     );
 }
+
     public List<RawChartRow> getGolonganRuang(
-            Integer instansiId, Integer jenisAsnId, Integer nomenklaturId,
-            String jenjang, String kategori, Integer wilayahPokjaId, Integer namaJabatanId) {
+            List<Integer> instansiId, List<Integer> jenisAsnId, List<Integer> nomenklaturId,
+            List<String> jenjang, List<String> kategori, List<Integer> wilayahPokjaId, List<Integer> namaJabatanId,
+            List<String> jenisInstansi) {
 
         StringBuilder sql = new StringBuilder("""
             SELECT 
@@ -275,7 +288,7 @@ public class GrafikRepository {
         """);
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId);
+        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId, jenisInstansi);
 
         sql.append(" GROUP BY g.golongan_ruang");
 
@@ -285,8 +298,9 @@ public class GrafikRepository {
     }
 
     public List<RawChartRow> getPersentaseJfMasn(
-            Integer instansiId, Integer jenisAsnId, Integer nomenklaturId,
-            String jenjang, String kategori, Integer wilayahPokjaId, Integer namaJabatanId) {
+            List<Integer> instansiId, List<Integer> jenisAsnId, List<Integer> nomenklaturId,
+            List<String> jenjang, List<String> kategori, List<Integer> wilayahPokjaId, List<Integer> namaJabatanId,
+            List<String> jenisInstansi) {
 
         StringBuilder sql = new StringBuilder("""
             SELECT 
@@ -301,7 +315,7 @@ public class GrafikRepository {
         """);
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId);
+        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId, jenisInstansi);
 
         sql.append(" GROUP BY j.nama_jabatan");
 
@@ -311,8 +325,9 @@ public class GrafikRepository {
     }
 
     public List<RawChartRow> getSebaranKategori(
-            Integer instansiId, Integer jenisAsnId, Integer nomenklaturId,
-            String jenjang, String kategori, Integer wilayahPokjaId, Integer namaJabatanId) {
+            List<Integer> instansiId, List<Integer> jenisAsnId, List<Integer> nomenklaturId,
+            List<String> jenjang, List<String> kategori, List<Integer> wilayahPokjaId, List<Integer> namaJabatanId,
+            List<String> jenisInstansi) {
 
         StringBuilder sql = new StringBuilder("""
             SELECT 
@@ -329,7 +344,7 @@ public class GrafikRepository {
         """);
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId);
+        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId, jenisInstansi);
 
         sql.append(" GROUP BY jj.nama_jenis_jf, ja.nama_jenis");
 
@@ -339,8 +354,9 @@ public class GrafikRepository {
     }
 
     public List<RawChartRow> getMasaKerjaJabatan(
-            Integer instansiId, Integer jenisAsnId, Integer nomenklaturId,
-            String jenjang, String kategori, Integer wilayahPokjaId, Integer namaJabatanId) {
+            List<Integer> instansiId, List<Integer> jenisAsnId, List<Integer> nomenklaturId,
+            List<String> jenjang, List<String> kategori, List<Integer> wilayahPokjaId, List<Integer> namaJabatanId,
+            List<String> jenisInstansi) {
 
         StringBuilder sql = new StringBuilder("""
             SELECT 
@@ -357,7 +373,7 @@ public class GrafikRepository {
         """);
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId);
+        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId, jenisInstansi);
 
         sql.append(" GROUP BY CASE WHEN a.masa_kerja_jabatan < 9 THEN '<9 Tahun' ELSE '>=9 Tahun' END");
 
@@ -367,8 +383,9 @@ public class GrafikRepository {
     }
 
     public List<RawChartRow> getMasaKerjaGolongan(
-            Integer instansiId, Integer jenisAsnId, Integer nomenklaturId,
-            String jenjang, String kategori, Integer wilayahPokjaId, Integer namaJabatanId) {
+            List<Integer> instansiId, List<Integer> jenisAsnId, List<Integer> nomenklaturId,
+            List<String> jenjang, List<String> kategori, List<Integer> wilayahPokjaId, List<Integer> namaJabatanId,
+            List<String> jenisInstansi) {
 
         StringBuilder sql = new StringBuilder("""
             SELECT 
@@ -385,7 +402,7 @@ public class GrafikRepository {
         """);
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId);
+        appendFilters(sql, params, instansiId, jenisAsnId, nomenklaturId, jenjang, kategori, wilayahPokjaId, namaJabatanId, jenisInstansi);
 
         sql.append(" GROUP BY CASE WHEN a.masa_kerja_golongan < 5 THEN '<5 Tahun' ELSE '>=5 Tahun' END");
 
