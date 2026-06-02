@@ -11,6 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import com.bsi.pusbin.modules.input.schema.DropdownOption;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -97,6 +100,29 @@ public class InputService {
     public InputResponse getDetail(Long idAsn) {
         return inputRepository.findById(idAsn)
                 .orElseThrow(() -> new BusinessException("Data ASN dengan ID " + idAsn + " tidak ditemukan"));
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, List<DropdownOption>> getFormOptions() {
+        Map<String, List<DropdownOption>> options = new HashMap<>();
+        options.put("jenisAsn", inputRepository.getJenisAsnOptions());
+        options.put("kedudukanAsn", inputRepository.getKedudukanAsnOptions());
+        options.put("jenisKelamin", inputRepository.getJenisKelaminOptions());
+        options.put("instansiKerja", inputRepository.getInstansiKerjaOptions());
+        options.put("kategoriInstansi", inputRepository.getKategoriInstansiOptions());
+        options.put("jenisInstansi", inputRepository.getJenisInstansiOptions());
+        options.put("tingkatPendidikan", inputRepository.getTingkatPendidikanOptions());
+        options.put("pendidikan", inputRepository.getPendidikanOptions());
+        options.put("jabatan", inputRepository.getJabatanOptions());
+        options.put("jenjang", inputRepository.getJenjangOptions());
+        options.put("jenisJf", inputRepository.getJenisJfOptions());
+        options.put("namaJabatan", inputRepository.getJabatanOptions());
+        options.put("nomenklatur", inputRepository.getNomenklaturOptions());
+        options.put("golonganRuang", inputRepository.getGolonganOptions());
+        options.put("jenisDiklat", inputRepository.getJenisDiklatOptions());
+        options.put("wilkerBkn", inputRepository.getWilkerBknOptions());
+        options.put("wilayahPokja", inputRepository.getWilayahPokjaOptions());
+        return options;
     }
 
     @Transactional

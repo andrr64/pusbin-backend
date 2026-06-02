@@ -38,7 +38,7 @@ MK JABATAN: date disimpan ke asn.masa_kerja_jabatan (INTEGER).
 
 Aku mau mengubah beberapa input manual (teks biasa) menjadi komponen Select Box (Dropdown) yang datanya dinamis diambil dari database. 
 
-Saya ingin mengubah seluruh kolom inputnya menjadi dropdown
+Saya ingin mengubah seluruh kolom inputnya menjadi dropdown kecuali kolom nip nya
 
 Saya sudah menyiapkan semua file terkait yang dibutuhkan. Tolong buatkan perubahan kodenya secara lengkap untuk sisi backend dan frontend.
 

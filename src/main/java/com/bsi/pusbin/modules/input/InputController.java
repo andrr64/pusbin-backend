@@ -4,7 +4,10 @@ import com.bsi.pusbin.modules.input.schema.InputPageResponse;
 import com.bsi.pusbin.modules.input.schema.InputRequest;
 import com.bsi.pusbin.modules.input.schema.InputResponse;
 import com.bsi.pusbin.modules.input.schema.SyncRequest;
+import com.bsi.pusbin.modules.input.schema.DropdownOption;
 import com.bsi.pusbin.shared.response.APIResponse;
+import java.util.Map;
+import java.util.List;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +40,15 @@ public class InputController {
     public ResponseEntity<APIResponse<InputResponse>> getDetail(@PathVariable Long id) {
         InputResponse response = inputService.getDetail(id);
         return ResponseEntity.ok(APIResponse.ok(response, "Detail ASN berhasil ditampilkan"));
+    }
+
+    /**
+     * Endpoint to fetch dropdown options for form inputs.
+     */
+    @GetMapping("/options")
+    public ResponseEntity<APIResponse<Map<String, List<DropdownOption>>>> getFormOptions() {
+        Map<String, List<DropdownOption>> options = inputService.getFormOptions();
+        return ResponseEntity.ok(APIResponse.ok(options, "Pilihan form berhasil ditampilkan"));
     }
 
     /**

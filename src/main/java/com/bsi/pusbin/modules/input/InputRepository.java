@@ -1,5 +1,6 @@
 package com.bsi.pusbin.modules.input;
 
+import com.bsi.pusbin.modules.input.schema.DropdownOption;
 import com.bsi.pusbin.modules.input.schema.InputResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -496,5 +497,70 @@ public class InputRepository {
                 .mkGolongan(mkGol)
                 .mkJabatan(mkJab)
                 .build();
+    }
+
+    public List<DropdownOption> getJenisAsnOptions() {
+        return jdbc.query("SELECT DISTINCT nama_jenis AS label, nama_jenis AS value FROM jenis_asn WHERE nama_jenis IS NOT NULL AND TRIM(nama_jenis) != '' ORDER BY nama_jenis", 
+            (rs, rowNum) -> new DropdownOption(rs.getString("label"), rs.getString("value")));
+    }
+    public List<DropdownOption> getKedudukanAsnOptions() {
+        return jdbc.query("SELECT DISTINCT nama_kedudukan AS label, nama_kedudukan AS value FROM kedudukan_asn WHERE nama_kedudukan IS NOT NULL AND TRIM(nama_kedudukan) != '' ORDER BY nama_kedudukan", 
+            (rs, rowNum) -> new DropdownOption(rs.getString("label"), rs.getString("value")));
+    }
+    public List<DropdownOption> getJenisKelaminOptions() {
+        return jdbc.query("SELECT DISTINCT nama_kelamin AS label, nama_kelamin AS value FROM jenis_kelamin WHERE nama_kelamin IS NOT NULL AND TRIM(nama_kelamin) != '' ORDER BY nama_kelamin", 
+            (rs, rowNum) -> new DropdownOption(rs.getString("label"), rs.getString("value")));
+    }
+    public List<DropdownOption> getInstansiKerjaOptions() {
+        return jdbc.query("SELECT DISTINCT nama_instansi AS label, nama_instansi AS value FROM instansi WHERE nama_instansi IS NOT NULL AND TRIM(nama_instansi) != '' ORDER BY nama_instansi", 
+            (rs, rowNum) -> new DropdownOption(rs.getString("label"), rs.getString("value")));
+    }
+    public List<DropdownOption> getKategoriInstansiOptions() {
+        return jdbc.query("SELECT DISTINCT kategori AS label, kategori AS value FROM instansi WHERE kategori IS NOT NULL AND TRIM(kategori) != '' ORDER BY kategori", 
+            (rs, rowNum) -> new DropdownOption(rs.getString("label"), rs.getString("value")));
+    }
+    public List<DropdownOption> getJenisInstansiOptions() {
+        return jdbc.query("SELECT DISTINCT jenis_instansi AS label, jenis_instansi AS value FROM instansi WHERE jenis_instansi IS NOT NULL AND TRIM(jenis_instansi) != '' ORDER BY jenis_instansi", 
+            (rs, rowNum) -> new DropdownOption(rs.getString("label"), rs.getString("value")));
+    }
+    public List<DropdownOption> getTingkatPendidikanOptions() {
+        return jdbc.query("SELECT DISTINCT tingkat AS label, tingkat AS value FROM pendidikan WHERE tingkat IS NOT NULL AND TRIM(tingkat) != '' ORDER BY tingkat", 
+            (rs, rowNum) -> new DropdownOption(rs.getString("label"), rs.getString("value")));
+    }
+    public List<DropdownOption> getPendidikanOptions() {
+        return jdbc.query("SELECT DISTINCT nama_pendidikan AS label, nama_pendidikan AS value FROM pendidikan WHERE nama_pendidikan IS NOT NULL AND TRIM(nama_pendidikan) != '' ORDER BY nama_pendidikan", 
+            (rs, rowNum) -> new DropdownOption(rs.getString("label"), rs.getString("value")));
+    }
+    public List<DropdownOption> getJabatanOptions() {
+        return jdbc.query("SELECT DISTINCT nama_jabatan AS label, nama_jabatan AS value FROM jabatan WHERE nama_jabatan IS NOT NULL AND TRIM(nama_jabatan) != '' ORDER BY nama_jabatan", 
+            (rs, rowNum) -> new DropdownOption(rs.getString("label"), rs.getString("value")));
+    }
+    public List<DropdownOption> getJenjangOptions() {
+        return jdbc.query("SELECT DISTINCT jenjang AS label, jenjang AS value FROM jabatan WHERE jenjang IS NOT NULL AND TRIM(jenjang) != '' ORDER BY jenjang", 
+            (rs, rowNum) -> new DropdownOption(rs.getString("label"), rs.getString("value")));
+    }
+    public List<DropdownOption> getJenisJfOptions() {
+        return jdbc.query("SELECT DISTINCT nama_jenis_jf AS label, nama_jenis_jf AS value FROM jenis_jf WHERE nama_jenis_jf IS NOT NULL AND TRIM(nama_jenis_jf) != '' ORDER BY nama_jenis_jf", 
+            (rs, rowNum) -> new DropdownOption(rs.getString("label"), rs.getString("value")));
+    }
+    public List<DropdownOption> getNomenklaturOptions() {
+        return jdbc.query("SELECT DISTINCT nama_nomenklatur AS label, nama_nomenklatur AS value FROM nomenklatur WHERE nama_nomenklatur IS NOT NULL AND TRIM(nama_nomenklatur) != '' ORDER BY nama_nomenklatur", 
+            (rs, rowNum) -> new DropdownOption(rs.getString("label"), rs.getString("value")));
+    }
+    public List<DropdownOption> getGolonganOptions() {
+        return jdbc.query("SELECT DISTINCT golongan_ruang AS label, golongan_ruang AS value FROM golongan WHERE golongan_ruang IS NOT NULL AND TRIM(golongan_ruang) != '' ORDER BY golongan_ruang", 
+            (rs, rowNum) -> new DropdownOption(rs.getString("label"), rs.getString("value")));
+    }
+    public List<DropdownOption> getJenisDiklatOptions() {
+        return jdbc.query("SELECT DISTINCT nama_jenis_diklat AS label, nama_jenis_diklat AS value FROM jenis_diklat WHERE nama_jenis_diklat IS NOT NULL AND TRIM(nama_jenis_diklat) != '' ORDER BY nama_jenis_diklat", 
+            (rs, rowNum) -> new DropdownOption(rs.getString("label"), rs.getString("value")));
+    }
+    public List<DropdownOption> getWilkerBknOptions() {
+        return jdbc.query("SELECT DISTINCT nama_wilker AS label, nama_wilker AS value FROM wilayah_bkn WHERE nama_wilker IS NOT NULL AND TRIM(nama_wilker) != '' ORDER BY nama_wilker", 
+            (rs, rowNum) -> new DropdownOption(rs.getString("label"), rs.getString("value")));
+    }
+    public List<DropdownOption> getWilayahPokjaOptions() {
+        return jdbc.query("SELECT DISTINCT nama_pokja AS label, nama_pokja AS value FROM wilayah_pokja WHERE nama_pokja IS NOT NULL AND TRIM(nama_pokja) != '' ORDER BY nama_pokja", 
+            (rs, rowNum) -> new DropdownOption(rs.getString("label"), rs.getString("value")));
     }
 }
