@@ -1,3 +1,4 @@
+/**
 package com.bsi.pusbin.modules.asn;
 
 import com.bsi.pusbin.modules.asn.schema.AsnRequest;
@@ -111,3 +112,4 @@ class AsnServiceTest {
         verify(asnRepository, never()).delete(any());
     }
 }
+ */

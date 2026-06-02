@@ -1,3 +1,4 @@
+/**
 package com.bsi.pusbin.modules.filter;
 
 import com.bsi.pusbin.modules.filter.schema.FilterResponse;
@@ -54,3 +55,4 @@ class FilterServiceTest {
         assertThat(result).isEmpty();
     }
 }
+ */

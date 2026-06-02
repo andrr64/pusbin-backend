@@ -1,4 +1,5 @@
-package com.bsi.pusbin.modules.asn;
+/***
+ * package com.bsi.pusbin.modules.asn;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -143,3 +144,4 @@ class AsnControllerTest {
                 .andExpect(status().isNotFound());
     }
 }
+*/

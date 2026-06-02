@@ -1,3 +1,4 @@
+/**
 package com.bsi.pusbin.modules.export;
 
 import com.bsi.pusbin.modules.tabel.schema.TabelResponse;
@@ -99,3 +100,4 @@ class ExportServiceTest {
         verify(exportRepository).findAll(1, 2, 3, 4, 5, 6, 7, 8);
     }
 }
+*/

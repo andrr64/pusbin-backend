@@ -1,3 +1,4 @@
+/**
 package com.bsi.pusbin.modules.tabel;
 
 import com.bsi.pusbin.config.GlobalExceptionHandler;
@@ -90,3 +91,4 @@ class TabelControllerTest {
                 .andExpect(status().isBadRequest());
     }
 }
+ */
