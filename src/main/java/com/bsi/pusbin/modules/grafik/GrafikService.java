@@ -17,11 +17,28 @@ public class GrafikService {
 
     private final GrafikRepository repository;
 
-    private static final Map<Integer, String> JENJANG_ID_TO_NAME = Map.of(
-            1, "Pertama", 2, "Muda", 3, "Madya", 4, "Utama", 5, "Terampil", 6, "Mahir", 7, "Penyelia"
+    private static final Map<Integer, String> JENJANG_ID_TO_NAME = Map.ofEntries(
+            Map.entry(1, "Pertama"),
+            Map.entry(2, "Muda"),
+            Map.entry(3, "Madya"),
+            Map.entry(4, "Utama"),
+            Map.entry(5, "Terampil"),
+            Map.entry(6, "Mahir"),
+            Map.entry(7, "Penyelia"),
+            Map.entry(8, "Ahli Pertama"),
+            Map.entry(9, "Ahli Muda"),
+            Map.entry(10, "Ahli Madya"),
+            Map.entry(11, "Ahli Utama"),
+            Map.entry(12, "Administrator"),
+            Map.entry(13, "Pengawas"),
+            Map.entry(14, "Pelaksana"),
+            Map.entry(15, "JPT Pratama"),
+            Map.entry(16, "JPT Madya"),
+            Map.entry(17, "JPT Utama")
     );
     private static final Map<Integer, String> KATEGORI_ID_TO_NAME = Map.of(
-            1, "Kementerian", 2, "Kabupaten", 3, "LPNK", 4, "Provinsi", 5, "Kota", 6, "KLNS", 7, "KLN", 8, "Kementerian Koordinator"
+            1, "Kementerian", 2, "Kabupaten", 3, "LPNK", 4, "Provinsi", 5, "Kota", 6, "KLNS", 7, "KLN", 8, "Kementerian Koordinator",
+            9, "Pemda", 10, "Lembaga"
     );
 
     private Criteria resolveCriteria(FilterRequest req) {
@@ -48,10 +65,18 @@ public class GrafikService {
         List<String> jenisInstansiList = req.jenisInstansi() != null ? new ArrayList<>(req.jenisInstansi()) : new ArrayList<>();
         if (req.jenisInstansiId() != null) {
             for (Integer id : req.jenisInstansiId()) {
-                if (id == Math.abs("Instansi Pusat".hashCode()) + 100) {
-                    jenisInstansiList.add("Instansi Pusat");
+                if (id == Math.abs("Instansi Pusat".hashCode()) + 100 || id == Math.abs("Pusat".hashCode()) + 100) {
+                    jenisInstansiList.add("Pusat");
                 } else if (id == Math.abs("Instansi Daerah".hashCode()) + 100) {
-                    jenisInstansiList.add("Instansi Daerah");
+                    jenisInstansiList.add("Daerah Provinsi");
+                    jenisInstansiList.add("Daerah Kabupaten");
+                    jenisInstansiList.add("Daerah Kota");
+                } else if (id == Math.abs("Daerah Provinsi".hashCode()) + 100) {
+                    jenisInstansiList.add("Daerah Provinsi");
+                } else if (id == Math.abs("Daerah Kabupaten".hashCode()) + 100) {
+                    jenisInstansiList.add("Daerah Kabupaten");
+                } else if (id == Math.abs("Daerah Kota".hashCode()) + 100) {
+                    jenisInstansiList.add("Daerah Kota");
                 }
             }
         }
@@ -64,7 +89,13 @@ public class GrafikService {
                 kategoriList,
                 req.wilayahPokjaId(),
                 req.namaJabatanId(),
-                jenisInstansiList
+                jenisInstansiList,
+                req.jenisKelaminId(),
+                req.golonganId(),
+                req.pendidikanId(),
+                req.masaKerjaGolongan(),
+                req.masaKerjaJabatan(),
+                req.kategoriJf()
         );
     }
 
@@ -76,7 +107,13 @@ public class GrafikService {
             List<String> kategori,
             List<Integer> wilayahPokjaId,
             List<Integer> namaJabatanId,
-            List<String> jenisInstansi
+            List<String> jenisInstansi,
+            List<Integer> jenisKelaminId,
+            List<Integer> golonganId,
+            List<Integer> pendidikanId,
+            List<String> masaKerjaGolongan,
+            List<String> masaKerjaJabatan,
+            List<String> kategoriJf
     ) {}
 
     // Helper: Map flat list (Simple charts)
@@ -186,7 +223,8 @@ public class GrafikService {
     public ChartResponse getSebaranAsnJenjang(FilterRequest req) {
         Criteria c = resolveCriteria(req);
         List<RawChartRow> data = repository.getSebaranAsnJenjang(
-                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi
+                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi,
+                c.jenisKelaminId, c.golonganId, c.pendidikanId, c.masaKerjaGolongan, c.masaKerjaJabatan, c.kategoriJf
         );
         return mapGroupedChart(data);
     }
@@ -195,7 +233,8 @@ public class GrafikService {
     public ChartResponse getPersentaseGender(FilterRequest req) {
         Criteria c = resolveCriteria(req);
         List<RawChartRow> data = repository.getPersentaseGender(
-                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi
+                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi,
+                c.jenisKelaminId, c.golonganId, c.pendidikanId, c.masaKerjaGolongan, c.masaKerjaJabatan, c.kategoriJf
         );
         return mapSimpleChart(data);
     }
@@ -204,7 +243,8 @@ public class GrafikService {
     public ChartResponse getPersentaseAsnJfMasn(FilterRequest req) {
         Criteria c = resolveCriteria(req);
         List<RawChartRow> data = repository.getPersentaseAsnJfMasn(
-                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi
+                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi,
+                c.jenisKelaminId, c.golonganId, c.pendidikanId, c.masaKerjaGolongan, c.masaKerjaJabatan, c.kategoriJf
         );
         return mapSimpleChart(data);
     }
@@ -213,7 +253,8 @@ public class GrafikService {
     public ChartResponse getSebaranAsnJfmasnInstansi(FilterRequest req) {
         Criteria c = resolveCriteria(req);
         List<RawChartRow> data = repository.getSebaranAsnJfmasnInstansi(
-                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi
+                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi,
+                c.jenisKelaminId, c.golonganId, c.pendidikanId, c.masaKerjaGolongan, c.masaKerjaJabatan, c.kategoriJf
         );
         return mapGroupedChart(data);
     }
@@ -222,7 +263,8 @@ public class GrafikService {
     public ChartResponse getSebaranAsnKlpd(FilterRequest req) {
         Criteria c = resolveCriteria(req);
         List<RawChartRow> data = repository.getSebaranAsnKlpd(
-                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi
+                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi,
+                c.jenisKelaminId, c.golonganId, c.pendidikanId, c.masaKerjaGolongan, c.masaKerjaJabatan, c.kategoriJf
         );
         return mapGroupedChart(data);
     }
@@ -231,7 +273,8 @@ public class GrafikService {
     public ChartResponse getSebaranAsnJabatan(FilterRequest req) {
         Criteria c = resolveCriteria(req);
         List<RawChartRow> data = repository.getSebaranAsnJabatan(
-                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi
+                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi,
+                c.jenisKelaminId, c.golonganId, c.pendidikanId, c.masaKerjaGolongan, c.masaKerjaJabatan, c.kategoriJf
         );
         return mapGroupedChart(data);
     }
@@ -252,7 +295,8 @@ public ChartResponse getTrenKenaikanJf(FilterRequest req) {
     public ChartResponse getGolonganRuang(FilterRequest req) {
         Criteria c = resolveCriteria(req);
         List<RawChartRow> data = repository.getGolonganRuang(
-                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi
+                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi,
+                c.jenisKelaminId, c.golonganId, c.pendidikanId, c.masaKerjaGolongan, c.masaKerjaJabatan, c.kategoriJf
         );
         return mapSimpleChart(data);
     }
@@ -261,7 +305,8 @@ public ChartResponse getTrenKenaikanJf(FilterRequest req) {
     public ChartResponse getPersentaseJfMasn(FilterRequest req) {
         Criteria c = resolveCriteria(req);
         List<RawChartRow> data = repository.getPersentaseJfMasn(
-                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi
+                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi,
+                c.jenisKelaminId, c.golonganId, c.pendidikanId, c.masaKerjaGolongan, c.masaKerjaJabatan, c.kategoriJf
         );
         return mapSimpleChart(data);
     }
@@ -270,7 +315,8 @@ public ChartResponse getTrenKenaikanJf(FilterRequest req) {
     public ChartResponse getSebaranKategori(FilterRequest req) {
         Criteria c = resolveCriteria(req);
         List<RawChartRow> data = repository.getSebaranKategori(
-                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi
+                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi,
+                c.jenisKelaminId, c.golonganId, c.pendidikanId, c.masaKerjaGolongan, c.masaKerjaJabatan, c.kategoriJf
         );
         return mapGroupedChart(data);
     }
@@ -279,7 +325,8 @@ public ChartResponse getTrenKenaikanJf(FilterRequest req) {
     public ChartResponse getMasaKerjaJabatan(FilterRequest req) {
         Criteria c = resolveCriteria(req);
         List<RawChartRow> rows = repository.getMasaKerjaJabatan(
-                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi
+                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi,
+                c.jenisKelaminId, c.golonganId, c.pendidikanId, c.masaKerjaGolongan, c.masaKerjaJabatan, c.kategoriJf
         );
 
         long lessThan9 = 0;
@@ -298,7 +345,8 @@ public ChartResponse getTrenKenaikanJf(FilterRequest req) {
     public ChartResponse getMasaKerjaGolongan(FilterRequest req) {
         Criteria c = resolveCriteria(req);
         List<RawChartRow> rows = repository.getMasaKerjaGolongan(
-                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi
+                c.instansiId, c.jenisAsnId, c.nomenklaturId, c.jenjang, c.kategori, c.wilayahPokjaId, c.namaJabatanId, c.jenisInstansi,
+                c.jenisKelaminId, c.golonganId, c.pendidikanId, c.masaKerjaGolongan, c.masaKerjaJabatan, c.kategoriJf
         );
 
         long lessThan5 = 0;

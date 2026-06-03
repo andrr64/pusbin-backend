@@ -13,6 +13,12 @@ public record FilterRequest(
     List<Integer> wilayahPokjaId,
     List<Integer> namaJabatanId,
     List<Integer> jenisInstansiId,
-    List<String> jenisInstansi
+    List<String> jenisInstansi,
+    List<Integer> jenisKelaminId,
+    List<Integer> golonganId,
+    List<Integer> pendidikanId,
+    List<String> masaKerjaGolongan,
+    List<String> masaKerjaJabatan,
+    List<String> kategoriJf
 ) {}
 

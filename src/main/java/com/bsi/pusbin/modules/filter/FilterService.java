@@ -14,14 +14,25 @@ public class FilterService {
     private final FilterRepository filterRepository;
 
     // Static mappings for Jenjang
-    private static final Map<Integer, String> JENJANG_ID_TO_NAME = Map.of(
-            1, "Pertama",
-            2, "Muda",
-            3, "Madya",
-            4, "Utama",
-            5, "Terampil",
-            6, "Mahir",
-            7, "Penyelia");
+    private static final Map<Integer, String> JENJANG_ID_TO_NAME = Map.ofEntries(
+            Map.entry(1, "Pertama"),
+            Map.entry(2, "Muda"),
+            Map.entry(3, "Madya"),
+            Map.entry(4, "Utama"),
+            Map.entry(5, "Terampil"),
+            Map.entry(6, "Mahir"),
+            Map.entry(7, "Penyelia"),
+            Map.entry(8, "Ahli Pertama"),
+            Map.entry(9, "Ahli Muda"),
+            Map.entry(10, "Ahli Madya"),
+            Map.entry(11, "Ahli Utama"),
+            Map.entry(12, "Administrator"),
+            Map.entry(13, "Pengawas"),
+            Map.entry(14, "Pelaksana"),
+            Map.entry(15, "JPT Pratama"),
+            Map.entry(16, "JPT Madya"),
+            Map.entry(17, "JPT Utama")
+    );
     private static final Map<String, Integer> JENJANG_NAME_TO_ID;
     static {
         Map<String, Integer> map = new HashMap<>();
@@ -43,7 +54,9 @@ public class FilterService {
             5, "Kota",
             6, "KLNS",
             7, "KLN",
-            8, "Kementerian Koordinator");
+            8, "Kementerian Koordinator",
+            9, "Pemda",
+            10, "Lembaga");
     private static final Map<String, Integer> KATEGORI_NAME_TO_ID;
     static {
         Map<String, Integer> map = new HashMap<>();
@@ -86,10 +99,18 @@ public class FilterService {
         List<String> jenisInstansiList = req.jenisInstansi() != null ? new ArrayList<>(req.jenisInstansi()) : new ArrayList<>();
         if (req.jenisInstansiId() != null) {
             for (Integer id : req.jenisInstansiId()) {
-                if (id == Math.abs("Instansi Pusat".hashCode()) + 100) {
-                    jenisInstansiList.add("Instansi Pusat");
+                if (id == Math.abs("Instansi Pusat".hashCode()) + 100 || id == Math.abs("Pusat".hashCode()) + 100) {
+                    jenisInstansiList.add("Pusat");
                 } else if (id == Math.abs("Instansi Daerah".hashCode()) + 100) {
-                    jenisInstansiList.add("Instansi Daerah");
+                    jenisInstansiList.add("Daerah Provinsi");
+                    jenisInstansiList.add("Daerah Kabupaten");
+                    jenisInstansiList.add("Daerah Kota");
+                } else if (id == Math.abs("Daerah Provinsi".hashCode()) + 100) {
+                    jenisInstansiList.add("Daerah Provinsi");
+                } else if (id == Math.abs("Daerah Kabupaten".hashCode()) + 100) {
+                    jenisInstansiList.add("Daerah Kabupaten");
+                } else if (id == Math.abs("Daerah Kota".hashCode()) + 100) {
+                    jenisInstansiList.add("Daerah Kota");
                 }
             }
         }
