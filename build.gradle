@@ -44,6 +44,9 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
 	runtimeOnly    'io.jsonwebtoken:jjwt-impl:0.12.6'
 	runtimeOnly    'io.jsonwebtoken:jjwt-jackson:0.12.6'
+
+	implementation 'com.github.librepdf:openpdf:2.0.3'
+	implementation 'org.jfree:jfreechart:1.5.4'
 }
 
 tasks.named('test') {
