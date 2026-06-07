@@ -140,6 +140,10 @@ public class InputRepository {
         // For the sake of fixing the API error so the data loads, this is sufficient.
     }
 
+    public void update(Long id, InputRequest req) {
+        // Update logic here
+    }
+
     public void delete(Long id) {
         jdbc.update("DELETE FROM asn WHERE id_asn = :id", new MapSqlParameterSource("id", id));
     }

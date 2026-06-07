@@ -40,6 +40,10 @@ public class InputService {
         repository.save(req);
     }
 
+    public void update(Long id, InputRequest req) {
+        repository.update(id, req);
+    }
+
     public void delete(Long id) {
         repository.delete(id);
     }

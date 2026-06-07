@@ -1,10 +1,12 @@
 package com.bsi.pusbin.modules.input.schema;
 
 import lombok.Data;
+import jakarta.validation.constraints.Pattern;
 
 @Data
 public class InputRequest {
-    private Long idAsn;
+    @Pattern(regexp = "^\\d{18}$", message = "NIP harus 18 digit angka")
+    private String nip;
     private String jenisAsn;
     private String kedudukanAsn;
     private String jenisKelamin;

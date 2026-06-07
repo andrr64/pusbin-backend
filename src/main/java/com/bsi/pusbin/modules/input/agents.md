@@ -49,3 +49,4 @@ Semua entitas master di bawah ini menerapkan pola RESTful API yang konsisten:
 1. **Generator API Client**: Buat fungsi modular untuk setiap endpoint (misal `getGolongan()`, `createGolongan(payload)`, dll) sesuai dengan pola CRUD di atas.
 2. **Handle Response**: Otomatis unwrap properti `data` dari JSON response.
 3. **Penamaan Model**: Gunakan penamaan field CamelCase di Typescript/Javascript agar sesuai dengan struktur backend Java Spring Boot.
+4. **Validasi NIP**: Pastikan form input memvalidasi field `nip` sehingga wajib berupa angka dan berjumlah tepat 18 karakter sebelum dikirim ke backend.

@@ -7,6 +7,7 @@ import com.bsi.pusbin.shared.response.APIResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 import java.util.Map;
@@ -31,9 +32,15 @@ public class InputController {
     }
 
     @PostMapping
-    public ResponseEntity<APIResponse<Void>> save(@RequestBody InputRequest request) {
+    public ResponseEntity<APIResponse<Void>> save(@Valid @RequestBody InputRequest request) {
         service.save(request);
         return ResponseEntity.ok(APIResponse.ok(null, "Created"));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<APIResponse<Void>> update(@PathVariable Long id, @Valid @RequestBody InputRequest request) {
+        service.update(id, request);
+        return ResponseEntity.ok(APIResponse.ok(null, "Updated"));
     }
 
     @DeleteMapping("/{id}")
