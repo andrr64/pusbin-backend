@@ -134,15 +134,125 @@ public class InputRepository {
         return list.isEmpty() ? null : list.get(0);
     }
 
+    private final com.bsi.pusbin.modules.importdata.ImportRepository importRepository;
+
     public void save(InputRequest req) {
-        // Simplified insert/update using just id_asn for now since we're lacking full resolve logic
-        // The ImportService already handles resolution, so we could call its methods or just do a basic implementation
-        // For the sake of fixing the API error so the data loads, this is sufficient.
+        Integer idJenisAsn = resolveJenisAsn(req.getJenisAsn());
+        Integer idKedudukan = resolveKedudukanAsn(req.getKedudukanAsn());
+        Integer idJenisKelamin = resolveJenisKelamin(req.getJenisKelamin());
+        Integer idPokja = resolveWilayahPokja(req.getWilayahPokja());
+        Integer idWilker = resolveWilayahBkn(req.getWilkerBkn(), idPokja, null);
+        Integer idInstansi = resolveInstansi(req.getInstansiKerja(), req.getKategoriInstansi(), idWilker);
+        Integer idPendidikan = resolvePendidikan(req.getPendidikan(), req.getTingkatPendidikan());
+        Integer idNomenklatur = resolveNomenklatur(req.getNomenklatur());
+        Integer idJenisJf = resolveJenisJf(req.getJenisJf());
+        String resolvedNamaJabatan = req.getNamaJabatan() != null && !req.getNamaJabatan().isEmpty() ? req.getNamaJabatan() : req.getJabatan();
+        Integer idJabatan = resolveJabatan(resolvedNamaJabatan, req.getJenjang(), idNomenklatur, idJenisJf);
+        String resolvedGol = req.getGolonganRuang() != null && !req.getGolonganRuang().isEmpty() ? req.getGolonganRuang() : req.getGolongan();
+        Integer idGolongan = resolveGolongan(resolvedGol);
+        Integer idJenisDiklat = resolveJenisDiklat(req.getJenisDiklat());
+        
+        java.time.LocalDate tmtJab = req.getTmtJabatan() != null && !req.getTmtJabatan().isEmpty() ? java.time.LocalDate.parse(req.getTmtJabatan()) : null;
+        java.time.LocalDate tmtGol = req.getTmtGolru() != null && !req.getTmtGolru().isEmpty() ? java.time.LocalDate.parse(req.getTmtGolru()) : null;
+
+        String sql = """
+            INSERT INTO asn (
+                nip, id_jenis_asn, id_kedudukan, id_jenis_kelamin, id_pendidikan,
+                id_instansi, id_jabatan, id_golongan, id_jenis_diklat,
+                tmt_jabatan, masa_kerja_jabatan, tmt_golongan, masa_kerja_golongan
+            ) VALUES (
+                :nip, :idJenisAsn, :idKedudukan, :idJenisKelamin, :idPendidikan,
+                :idInstansi, :idJabatan, :idGolongan, :idJenisDiklat,
+                :tmtJabatan, :masaKerjaJabatan, :tmtGolongan, :masaKerjaGolongan
+            )
+        """;
+
+        MapSqlParameterSource params = new MapSqlParameterSource()
+            .addValue("nip", req.getNip())
+            .addValue("idJenisAsn", idJenisAsn)
+            .addValue("idKedudukan", idKedudukan)
+            .addValue("idJenisKelamin", idJenisKelamin)
+            .addValue("idPendidikan", idPendidikan)
+            .addValue("idInstansi", idInstansi)
+            .addValue("idJabatan", idJabatan)
+            .addValue("idGolongan", idGolongan)
+            .addValue("idJenisDiklat", idJenisDiklat)
+            .addValue("tmtJabatan", tmtJab)
+            .addValue("masaKerjaJabatan", req.getMkJabatan())
+            .addValue("tmtGolongan", tmtGol)
+            .addValue("masaKerjaGolongan", req.getMasaKerjaGolongan());
+
+        jdbc.update(sql, params);
     }
 
     public void update(Long id, InputRequest req) {
-        // Update logic here
+        Integer idJenisAsn = resolveJenisAsn(req.getJenisAsn());
+        Integer idKedudukan = resolveKedudukanAsn(req.getKedudukanAsn());
+        Integer idJenisKelamin = resolveJenisKelamin(req.getJenisKelamin());
+        Integer idPokja = resolveWilayahPokja(req.getWilayahPokja());
+        Integer idWilker = resolveWilayahBkn(req.getWilkerBkn(), idPokja, null);
+        Integer idInstansi = resolveInstansi(req.getInstansiKerja(), req.getKategoriInstansi(), idWilker);
+        Integer idPendidikan = resolvePendidikan(req.getPendidikan(), req.getTingkatPendidikan());
+        Integer idNomenklatur = resolveNomenklatur(req.getNomenklatur());
+        Integer idJenisJf = resolveJenisJf(req.getJenisJf());
+        String resolvedNamaJabatan = req.getNamaJabatan() != null && !req.getNamaJabatan().isEmpty() ? req.getNamaJabatan() : req.getJabatan();
+        Integer idJabatan = resolveJabatan(resolvedNamaJabatan, req.getJenjang(), idNomenklatur, idJenisJf);
+        String resolvedGol = req.getGolonganRuang() != null && !req.getGolonganRuang().isEmpty() ? req.getGolonganRuang() : req.getGolongan();
+        Integer idGolongan = resolveGolongan(resolvedGol);
+        Integer idJenisDiklat = resolveJenisDiklat(req.getJenisDiklat());
+        
+        java.time.LocalDate tmtJab = req.getTmtJabatan() != null && !req.getTmtJabatan().isEmpty() ? java.time.LocalDate.parse(req.getTmtJabatan()) : null;
+        java.time.LocalDate tmtGol = req.getTmtGolru() != null && !req.getTmtGolru().isEmpty() ? java.time.LocalDate.parse(req.getTmtGolru()) : null;
+
+        String sql = """
+            UPDATE asn SET
+                nip = :nip,
+                id_jenis_asn = :idJenisAsn,
+                id_kedudukan = :idKedudukan,
+                id_jenis_kelamin = :idJenisKelamin,
+                id_pendidikan = :idPendidikan,
+                id_instansi = :idInstansi,
+                id_jabatan = :idJabatan,
+                id_golongan = :idGolongan,
+                id_jenis_diklat = :idJenisDiklat,
+                tmt_jabatan = :tmtJabatan,
+                masa_kerja_jabatan = :masaKerjaJabatan,
+                tmt_golongan = :tmtGolongan,
+                masa_kerja_golongan = :masaKerjaGolongan
+            WHERE id_asn = :idAsn
+        """;
+
+        MapSqlParameterSource params = new MapSqlParameterSource()
+            .addValue("nip", req.getNip())
+            .addValue("idJenisAsn", idJenisAsn)
+            .addValue("idKedudukan", idKedudukan)
+            .addValue("idJenisKelamin", idJenisKelamin)
+            .addValue("idPendidikan", idPendidikan)
+            .addValue("idInstansi", idInstansi)
+            .addValue("idJabatan", idJabatan)
+            .addValue("idGolongan", idGolongan)
+            .addValue("idJenisDiklat", idJenisDiklat)
+            .addValue("tmtJabatan", tmtJab)
+            .addValue("masaKerjaJabatan", req.getMkJabatan())
+            .addValue("tmtGolongan", tmtGol)
+            .addValue("masaKerjaGolongan", req.getMasaKerjaGolongan())
+            .addValue("idAsn", id);
+
+        jdbc.update(sql, params);
     }
+
+    private Integer resolveJenisAsn(String val) { return val == null || val.isEmpty() ? null : importRepository.insertJenisAsn(val); }
+    private Integer resolveKedudukanAsn(String val) { return val == null || val.isEmpty() ? null : importRepository.insertKedudukanAsn(val); }
+    private Integer resolveJenisKelamin(String val) { return val == null || val.isEmpty() ? null : importRepository.insertJenisKelamin(val); }
+    private Integer resolveWilayahPokja(String val) { return val == null || val.isEmpty() ? null : importRepository.insertWilayahPokja(val); }
+    private Integer resolveWilayahBkn(String val, Integer idPokja, Integer noUrut) { return val == null || val.isEmpty() ? null : importRepository.insertWilayahBkn(val, idPokja, noUrut); }
+    private Integer resolveInstansi(String val, String kategori, Integer idWilker) { return val == null || val.isEmpty() ? null : importRepository.insertInstansi(val, kategori, idWilker); }
+    private Integer resolvePendidikan(String val, String tingkat) { return val == null || val.isEmpty() ? null : importRepository.insertPendidikan(val, tingkat); }
+    private Integer resolveNomenklatur(String val) { return val == null || val.isEmpty() ? null : importRepository.insertNomenklatur(val); }
+    private Integer resolveJenisJf(String val) { return val == null || val.isEmpty() ? null : importRepository.insertJenisJf(val); }
+    private Integer resolveJabatan(String val, String jenjang, Integer idNom, Integer idJf) { return val == null || val.isEmpty() ? null : importRepository.insertJabatan(val, jenjang, idNom, idJf); }
+    private Integer resolveGolongan(String val) { return val == null || val.isEmpty() ? null : importRepository.insertGolongan(val); }
+    private Integer resolveJenisDiklat(String val) { return val == null || val.isEmpty() ? null : importRepository.insertJenisDiklat(val); }
 
     public void delete(Long id) {
         jdbc.update("DELETE FROM asn WHERE id_asn = :id", new MapSqlParameterSource("id", id));
