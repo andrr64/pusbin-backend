@@ -25,10 +25,9 @@ public class InputResponse {
     private String masaKerjaJabatanString;
     private String golonganRuang;
     private String tmtGolru;
-    private String masaKerjaGolonganString;
+    private Integer masaKerjaGolongan;
     private String wilkerBkn;
-    private Integer noUrutWilker;
     private String wilayahPokja;
-    private Integer mkGolongan;
+    private String mkGolongan;
     private Integer mkJabatan;
 }

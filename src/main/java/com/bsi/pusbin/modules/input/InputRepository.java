@@ -41,7 +41,11 @@ public class InputRepository {
         
         // Ensure nullable fields don't cause issues
         Object mkGol = rs.getObject("mk_golongan");
-        if (mkGol != null) res.setMkJabatan(((Number) mkGol).intValue());
+        if (mkGol != null) {
+            int mk = ((Number) mkGol).intValue();
+            res.setMasaKerjaGolongan(mk);
+            res.setMkGolongan(mk >= 5 ? ">= 5 Tahun" : "< 5 Tahun");
+        }
         
         Object mkJab = rs.getObject("mk_jabatan");
         if (mkJab != null) res.setMkJabatan(((Number) mkJab).intValue());
