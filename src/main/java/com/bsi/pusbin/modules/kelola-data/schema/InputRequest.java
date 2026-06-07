@@ -1,5 +1,6 @@
 package com.bsi.pusbin.modules.input.schema;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,8 +12,13 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InputResponse {
+public class InputRequest {
+
+    @NotNull(message = "ID ASN/NIP tidak boleh kosong")
     private Long idAsn;
+
+    private String nip;
+
     private String jenisAsn;
     private String kedudukanAsn;
     private String jenisKelamin;
@@ -40,6 +46,6 @@ public class InputResponse {
     private Integer noUrutWilker;
     private String wilayahPokja;
     
-    private Integer mkGolongan;
-    private Integer mkJabatan;
+    private Object mkGolongan; // can be Date, String, or Integer
+    private Object mkJabatan; // can be Date, String, or Integer
 }

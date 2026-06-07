@@ -287,22 +287,23 @@ public class InputRepository {
     // --- ASN CRUD Core Methods ---
 
     public void upsertAsn(
-            Long idAsn, Integer idJenisAsn, Integer idKedudukan, Integer idJenisKelamin,
+            Long idAsn, String nip, Integer idJenisAsn, Integer idKedudukan, Integer idJenisKelamin,
             Integer idPendidikan, Integer idInstansi, Integer idJabatan, Integer idGolongan,
             Integer idJenisDiklat, LocalDate tmtJabatan, Integer masaKerjaJabatan,
             LocalDate tmtGolongan, Integer masaKerjaGolongan
     ) {
         String sql = """
             INSERT INTO asn (
-                id_asn, id_jenis_asn, id_kedudukan, id_jenis_kelamin, id_pendidikan,
+                id_asn, nip, id_jenis_asn, id_kedudukan, id_jenis_kelamin, id_pendidikan,
                 id_instansi, id_jabatan, id_golongan, id_jenis_diklat,
                 tmt_jabatan, masa_kerja_jabatan, tmt_golongan, masa_kerja_golongan
             ) VALUES (
-                :idAsn, :idJenisAsn, :idKedudukan, :idJenisKelamin, :idPendidikan,
+                :idAsn, :nip, :idJenisAsn, :idKedudukan, :idJenisKelamin, :idPendidikan,
                 :idInstansi, :idJabatan, :idGolongan, :idJenisDiklat,
                 :tmtJabatan, :masaKerjaJabatan, :tmtGolongan, :masaKerjaGolongan
             )
             ON CONFLICT (id_asn) DO UPDATE SET
+                nip = EXCLUDED.nip,
                 id_jenis_asn = EXCLUDED.id_jenis_asn,
                 id_kedudukan = EXCLUDED.id_kedudukan,
                 id_jenis_kelamin = EXCLUDED.id_jenis_kelamin,
@@ -319,6 +320,7 @@ public class InputRepository {
 
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("idAsn", idAsn)
+                .addValue("nip", nip)
                 .addValue("idJenisAsn", idJenisAsn)
                 .addValue("idKedudukan", idKedudukan)
                 .addValue("idJenisKelamin", idJenisKelamin)
@@ -339,6 +341,7 @@ public class InputRepository {
         String sql = """
             SELECT 
                 a.id_asn,
+                a.nip,
                 ja.nama_jenis AS jenis_asn,
                 ka.nama_kedudukan AS kedudukan_asn,
                 jk.nama_kelamin AS jenis_kelamin,
@@ -392,6 +395,7 @@ public class InputRepository {
         StringBuilder sql = new StringBuilder("""
             SELECT 
                 a.id_asn,
+                a.nip,
                 ja.nama_jenis AS jenis_asn,
                 ka.nama_kedudukan AS kedudukan_asn,
                 jk.nama_kelamin AS jenis_kelamin,
@@ -470,6 +474,7 @@ public class InputRepository {
 
         return InputResponse.builder()
                 .idAsn(rs.getLong("id_asn"))
+                .nip(rs.getString("nip"))
                 .jenisAsn(rs.getString("jenis_asn"))
                 .kedudukanAsn(rs.getString("kedudukan_asn"))
                 .jenisKelamin(rs.getString("jenis_kelamin"))

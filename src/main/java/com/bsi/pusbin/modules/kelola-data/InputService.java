@@ -68,6 +68,7 @@ public class InputService {
         // 6. Persist/Upsert target ASN record
         inputRepository.upsertAsn(
                 req.getIdAsn(),
+                req.getNip(),
                 idJenisAsn,
                 idKedudukan,
                 idJenisKelamin,
