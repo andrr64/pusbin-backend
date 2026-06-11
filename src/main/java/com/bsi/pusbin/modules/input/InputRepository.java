@@ -22,6 +22,7 @@ public class InputRepository {
     private InputResponse mapRow(ResultSet rs, int rowNum) throws SQLException {
         InputResponse res = new InputResponse();
         res.setIdAsn(rs.getLong("id_asn"));
+        res.setNip(rs.getString("nip"));  // FIX: nip sebelumnya tidak di-set
         res.setJenisAsn(rs.getString("jenis_asn"));
         res.setKedudukanAsn(rs.getString("kedudukan_asn"));
         res.setJenisKelamin(rs.getString("jenis_kelamin"));
@@ -60,6 +61,7 @@ public class InputRepository {
         return """
             SELECT 
                 a.id_asn,
+                a.nip,
                 ja.nama_jenis AS jenis_asn,
                 k.nama_kedudukan AS kedudukan_asn,
                 jk.nama_kelamin AS jenis_kelamin,
