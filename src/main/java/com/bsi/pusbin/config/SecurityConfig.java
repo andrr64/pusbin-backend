@@ -63,11 +63,15 @@ public class SecurityConfig {
                 })
             )
             .headers(headers -> headers
-                .httpStrictTransportSecurity(hsts -> hsts.disable())
+                .httpStrictTransportSecurity(hsts -> hsts
+                    .includeSubDomains(true)
+                    .maxAgeInSeconds(31536000))
                 .frameOptions(fo -> fo.deny())
                 .contentTypeOptions(ct -> {})
                 .referrerPolicy(rp -> rp
                     .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+                .contentSecurityPolicy(csp -> csp
+                    .policyDirectives("default-src 'none'; frame-ancestors 'none'"))
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -76,7 +80,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("*"));
+        // Only the explicitly configured origins may send credentialed (cookie-based) requests.
+        // A wildcard origin combined with allowCredentials(true) would let any site - including
+        // automated/AI-driven clients - replay a victim's auth cookies cross-origin.
+        config.setAllowedOrigins(allowedOrigins);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("Authorization", "Content-Type"));

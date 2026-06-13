@@ -1,6 +1,5 @@
-package com.bsi.pusbin.modules.test.service;
+package com.bsi.pusbin.modules.test;
 
-import com.bsi.pusbin.modules.test.repository.TestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

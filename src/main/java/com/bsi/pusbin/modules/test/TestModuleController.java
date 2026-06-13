@@ -1,6 +1,5 @@
-package com.bsi.pusbin.modules.test.controller;
+package com.bsi.pusbin.modules.test;
 
-import com.bsi.pusbin.modules.test.service.TestService;
 import com.bsi.pusbin.shared.response.APIResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

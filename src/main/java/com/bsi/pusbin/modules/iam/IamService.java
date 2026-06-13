@@ -6,9 +6,10 @@ import com.bsi.pusbin.shared.exception.db.DuplicateResourceException;
 import com.bsi.pusbin.shared.exception.service.UnauthorizedException;
 import com.bsi.pusbin.shared.security.JwtProperties;
 import com.bsi.pusbin.shared.security.JwtProvider;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -65,25 +66,36 @@ public class IamService {
         // 1. Periksa laju request IP pengirim
         rateLimiter.check("login", ip);
 
-        // 2. Cari data user berdasarkan NIP
-        IamRepository.UserRecord user = iamRepository.findByNip(req.nip())
-                .orElseThrow(() -> new UnauthorizedException("NIP atau password salah"));
+        // 2. Periksa apakah akun ini sedang dikunci akibat terlalu banyak login gagal.
+        //    Pertahanan ini tetap berlaku walau penyerang berganti-ganti alamat IP.
+        rateLimiter.checkAccountLockout(req.nip());
 
-        // 3. Verifikasi apakah password cocok dengan hash yang tersimpan di DB
+        // 3. Cari data user berdasarkan NIP
+        IamRepository.UserRecord user = iamRepository.findByNip(req.nip())
+                .orElseThrow(() -> {
+                    rateLimiter.recordFailedLogin(req.nip());
+                    return new UnauthorizedException("NIP atau password salah");
+                });
+
+        // 4. Verifikasi apakah password cocok dengan hash yang tersimpan di DB
         if (!passwordEncoder.matches(req.password(), user.passwordHash())) {
+            rateLimiter.recordFailedLogin(req.nip());
             throw new UnauthorizedException("NIP atau password salah");
         }
 
-        // 4. Generate token JWT baru jika otentikasi sukses
+        // 5. Login berhasil, hapus riwayat kegagalan login akun ini
+        rateLimiter.resetFailedLogin(req.nip());
+
+        // 6. Generate token JWT baru jika otentikasi sukses
         String accessToken  = jwtProvider.generateAccessToken(user.nip());
         String refreshToken = jwtProvider.generateRefreshToken(); // UUID acak
         String tokenHash    = jwtProvider.hashRefreshToken(refreshToken); // Hash satu-arah untuk disimpan di DB
         Timestamp expiresAt = Timestamp.from(Instant.now().plusMillis(jwtProperties.getRefreshTokenExpiryMs()));
 
-        // 5. Simpan hash refresh token ke database
+        // 7. Simpan hash refresh token ke database
         iamRepository.saveRefreshToken(user.id(), tokenHash, expiresAt);
-        
-        // 6. Set access_token dan refresh_token sebagai HttpOnly Cookies di response
+
+        // 8. Set access_token dan refresh_token sebagai HttpOnly Cookies di response
         setTokenCookies(res, accessToken, refreshToken);
     }
 
@@ -131,28 +143,34 @@ public class IamService {
      * Menulis token otentikasi ke dalam HTTP Cookies.
      */
     private void setTokenCookies(HttpServletResponse res, String accessToken, String refreshToken) {
-        res.addCookie(buildCookie("access_token",  accessToken,  (int)(jwtProperties.getAccessTokenExpiryMs()  / 1000)));
-        res.addCookie(buildCookie("refresh_token", refreshToken, (int)(jwtProperties.getRefreshTokenExpiryMs() / 1000)));
+        res.addHeader(HttpHeaders.SET_COOKIE, buildCookie("access_token",  accessToken,  (int)(jwtProperties.getAccessTokenExpiryMs()  / 1000)));
+        res.addHeader(HttpHeaders.SET_COOKIE, buildCookie("refresh_token", refreshToken, (int)(jwtProperties.getRefreshTokenExpiryMs() / 1000)));
     }
 
     /**
      * Menghapus token otentikasi dengan menyetel isi cookie kosong dan masa aktif 0 detik.
      */
     private void clearTokenCookies(HttpServletResponse res) {
-        res.addCookie(buildCookie("access_token",  "", 0));
-        res.addCookie(buildCookie("refresh_token", "", 0));
+        res.addHeader(HttpHeaders.SET_COOKIE, buildCookie("access_token",  "", 0));
+        res.addHeader(HttpHeaders.SET_COOKIE, buildCookie("refresh_token", "", 0));
     }
 
     /**
-     * Utility untuk membangun objek Cookie dengan bendera pengamanan ketat.
+     * Utility untuk membangun header Set-Cookie dengan bendera pengamanan ketat.
+     *
+     * - SameSite=Strict: Cookie tidak akan dikirim pada request lintas situs (cross-site),
+     *   sehingga skrip otomatis/agen AI yang berjalan dari domain lain tidak bisa memicu
+     *   request bercookie ke endpoint ini (mitigasi CSRF).
      */
-    private Cookie buildCookie(String name, String value, int maxAge) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setHttpOnly(true); // Mencegah akses via JavaScript (Anti XSS)
-        cookie.setSecure(true);   // Hanya dikirimkan melalui jalur HTTPS yang terenkripsi (Anti MitM/Sniffing)
-        cookie.setPath("/");      // Cookie berlaku untuk seluruh path URL di server kita
-        cookie.setMaxAge(maxAge);  // Mengatur masa aktif cookie (dalam detik)
-        return cookie;
+    private String buildCookie(String name, String value, int maxAge) {
+        return ResponseCookie.from(name, value)
+                .httpOnly(true)   // Mencegah akses via JavaScript (Anti XSS)
+                .secure(true)     // Hanya dikirimkan melalui jalur HTTPS yang terenkripsi (Anti MitM/Sniffing)
+                .path("/")        // Cookie berlaku untuk seluruh path URL di server kita
+                .maxAge(maxAge)   // Mengatur masa aktif cookie (dalam detik)
+                .sameSite("Strict")
+                .build()
+                .toString();
     }
 }
 

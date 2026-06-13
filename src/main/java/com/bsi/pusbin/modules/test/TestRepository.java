@@ -1,4 +1,4 @@
-package com.bsi.pusbin.modules.test.repository;
+package com.bsi.pusbin.modules.test;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
