@@ -23,6 +23,7 @@ public class InputRepository {
         InputResponse res = new InputResponse();
         res.setIdAsn(rs.getLong("id_asn"));
         res.setNip(rs.getString("nip"));  // FIX: nip sebelumnya tidak di-set
+        res.setNama(rs.getString("nama"));
         res.setJenisAsn(rs.getString("jenis_asn"));
         res.setKedudukanAsn(rs.getString("kedudukan_asn"));
         res.setJenisKelamin(rs.getString("jenis_kelamin"));
@@ -62,6 +63,7 @@ public class InputRepository {
             SELECT 
                 a.id_asn,
                 a.nip,
+                a.nama,
                 ja.nama_jenis AS jenis_asn,
                 k.nama_kedudukan AS kedudukan_asn,
                 jk.nama_kelamin AS jenis_kelamin,
@@ -159,11 +161,11 @@ public class InputRepository {
 
         String sql = """
             INSERT INTO asn (
-                nip, id_jenis_asn, id_kedudukan, id_jenis_kelamin, id_pendidikan,
+                nip, nama, id_jenis_asn, id_kedudukan, id_jenis_kelamin, id_pendidikan,
                 id_instansi, id_jabatan, id_golongan, id_jenis_diklat,
                 tmt_jabatan, masa_kerja_jabatan, tmt_golongan, masa_kerja_golongan
             ) VALUES (
-                :nip, :idJenisAsn, :idKedudukan, :idJenisKelamin, :idPendidikan,
+                :nip, :nama, :idJenisAsn, :idKedudukan, :idJenisKelamin, :idPendidikan,
                 :idInstansi, :idJabatan, :idGolongan, :idJenisDiklat,
                 :tmtJabatan, :masaKerjaJabatan, :tmtGolongan, :masaKerjaGolongan
             )
@@ -171,6 +173,7 @@ public class InputRepository {
 
         MapSqlParameterSource params = new MapSqlParameterSource()
             .addValue("nip", req.getNip())
+            .addValue("nama", req.getNama())
             .addValue("idJenisAsn", idJenisAsn)
             .addValue("idKedudukan", idKedudukan)
             .addValue("idJenisKelamin", idJenisKelamin)
@@ -209,6 +212,7 @@ public class InputRepository {
         String sql = """
             UPDATE asn SET
                 nip = :nip,
+                nama = :nama,
                 id_jenis_asn = :idJenisAsn,
                 id_kedudukan = :idKedudukan,
                 id_jenis_kelamin = :idJenisKelamin,
@@ -226,6 +230,7 @@ public class InputRepository {
 
         MapSqlParameterSource params = new MapSqlParameterSource()
             .addValue("nip", req.getNip())
+            .addValue("nama", req.getNama())
             .addValue("idJenisAsn", idJenisAsn)
             .addValue("idKedudukan", idKedudukan)
             .addValue("idJenisKelamin", idJenisKelamin)
@@ -248,7 +253,7 @@ public class InputRepository {
     private Integer resolveJenisKelamin(String val) { return val == null || val.isEmpty() ? null : importRepository.insertJenisKelamin(val); }
     private Integer resolveWilayahPokja(String val) { return val == null || val.isEmpty() ? null : importRepository.insertWilayahPokja(val); }
     private Integer resolveWilayahBkn(String val, Integer idPokja, Integer noUrut) { return val == null || val.isEmpty() ? null : importRepository.insertWilayahBkn(val, idPokja, noUrut); }
-    private Integer resolveInstansi(String val, String kategori, Integer idWilker) { return val == null || val.isEmpty() ? null : importRepository.insertInstansi(val, kategori, idWilker); }
+    private Integer resolveInstansi(String val, String kategori, Integer idWilker) { return val == null || val.isEmpty() ? null : importRepository.insertInstansi(val, kategori, null, idWilker); }
     private Integer resolvePendidikan(String val, String tingkat) { return val == null || val.isEmpty() ? null : importRepository.insertPendidikan(val, tingkat); }
     private Integer resolveNomenklatur(String val) { return val == null || val.isEmpty() ? null : importRepository.insertNomenklatur(val); }
     private Integer resolveJenisJf(String val) { return val == null || val.isEmpty() ? null : importRepository.insertJenisJf(val); }

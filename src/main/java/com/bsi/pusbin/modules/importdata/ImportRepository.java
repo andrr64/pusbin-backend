@@ -18,7 +18,8 @@ public class ImportRepository {
     private final NamedParameterJdbcTemplate jdbc;
 
     public record AsnRecord(
-            Long idAsn,
+            String nip,
+            String nama,
             Integer idJenisAsn,
             Integer idKedudukan,
             Integer idJenisKelamin,
@@ -226,11 +227,12 @@ public class ImportRepository {
         return keyHolder.getKey() != null ? keyHolder.getKey().intValue() : null;
     }
 
-    public Integer insertInstansi(String nama, String kategori, Integer idWilker) {
-        String sqlInsert = "INSERT INTO instansi (nama_instansi, kategori, id_wilker) VALUES (:nama, :kategori, :idWilker)";
+    public Integer insertInstansi(String nama, String kategori, String jenisInstansi, Integer idWilker) {
+        String sqlInsert = "INSERT INTO instansi (nama_instansi, kategori, jenis_instansi, id_wilker) VALUES (:nama, :kategori, :jenisInstansi, :idWilker)";
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("nama", nama.trim())
                 .addValue("kategori", kategori != null ? kategori.trim() : null)
+                .addValue("jenisInstansi", jenisInstansi != null ? jenisInstansi.trim() : null)
                 .addValue("idWilker", idWilker);
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(sqlInsert, params, keyHolder, new String[]{"id_instansi"});
@@ -297,15 +299,16 @@ public class ImportRepository {
         if (records.isEmpty()) return;
         String sql = """
             INSERT INTO asn (
-                id_asn, id_jenis_asn, id_kedudukan, id_jenis_kelamin, id_pendidikan,
+                nip, nama, id_jenis_asn, id_kedudukan, id_jenis_kelamin, id_pendidikan,
                 id_instansi, id_jabatan, id_golongan, id_jenis_diklat,
-                tmt_jabatan, masa_kerja_jabatan, tmt_golongan, masa_kerja_golongan
+                tmt_jabatan, masa_kerja_jabatan, tmt_golongan, masa_kerja_golongan, updated_at
             ) VALUES (
-                :idAsn, :idJenisAsn, :idKedudukan, :idJenisKelamin, :idPendidikan,
+                :nip, :nama, :idJenisAsn, :idKedudukan, :idJenisKelamin, :idPendidikan,
                 :idInstansi, :idJabatan, :idGolongan, :idJenisDiklat,
-                :tmtJabatan, :masaKerjaJabatan, :tmtGolongan, :masaKerjaGolongan
+                :tmtJabatan, :masaKerjaJabatan, :tmtGolongan, :masaKerjaGolongan, CURRENT_TIMESTAMP
             )
-            ON CONFLICT (id_asn) DO UPDATE SET
+            ON CONFLICT (nip) DO UPDATE SET
+                nama = EXCLUDED.nama,
                 id_jenis_asn = EXCLUDED.id_jenis_asn,
                 id_kedudukan = EXCLUDED.id_kedudukan,
                 id_jenis_kelamin = EXCLUDED.id_jenis_kelamin,
@@ -317,14 +320,16 @@ public class ImportRepository {
                 tmt_jabatan = EXCLUDED.tmt_jabatan,
                 masa_kerja_jabatan = EXCLUDED.masa_kerja_jabatan,
                 tmt_golongan = EXCLUDED.tmt_golongan,
-                masa_kerja_golongan = EXCLUDED.masa_kerja_golongan
+                masa_kerja_golongan = EXCLUDED.masa_kerja_golongan,
+                updated_at = CURRENT_TIMESTAMP
             """;
 
         MapSqlParameterSource[] batchParams = new MapSqlParameterSource[records.size()];
         for (int i = 0; i < records.size(); i++) {
             AsnRecord r = records.get(i);
             batchParams[i] = new MapSqlParameterSource()
-                    .addValue("idAsn", r.idAsn())
+                    .addValue("nip", r.nip())
+                    .addValue("nama", r.nama())
                     .addValue("idJenisAsn", r.idJenisAsn())
                     .addValue("idKedudukan", r.idKedudukan())
                     .addValue("idJenisKelamin", r.idJenisKelamin())

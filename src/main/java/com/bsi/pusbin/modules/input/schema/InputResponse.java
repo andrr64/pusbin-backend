@@ -6,6 +6,7 @@ import lombok.Data;
 public class InputResponse {
     private Long idAsn;
     private String nip;  // FIX: nip sebelumnya tidak ada di response
+    private String nama;
     private String jenisAsn;
     private String kedudukanAsn;
     private String jenisKelamin;

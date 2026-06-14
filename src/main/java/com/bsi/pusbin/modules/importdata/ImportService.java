@@ -123,7 +123,8 @@ public class ImportService {
                         rowNum++;
                         totalRows++;
 
-                        String idAsnStr = getValue(record, indices.idAsnIdx);
+                        String nip = getValue(record, indices.nipIdx);
+                        String nama = getValue(record, indices.namaIdx);
                         String jenisAsn = getValue(record, indices.jenisAsnIdx);
                         String kedudukanAsn = getValue(record, indices.kedudukanAsnIdx);
                         String jenisKelamin = getValue(record, indices.jenisKelaminIdx);
@@ -146,21 +147,14 @@ public class ImportService {
                         String wilayahPokja = getValue(record, indices.wilayahPokjaIdx);
                         String mkGolonganStr = getValue(record, indices.mkGolonganIdx);
                         String mkJabatanStr = getValue(record, indices.mkJabatanIdx);
+                        String jenisInstansi = getValue(record, indices.jenisInstansiIdx);
 
                         boolean rowHasError = false;
 
                         // Validation
-                        Long idAsn = null;
-                        if (idAsnStr.isEmpty()) {
-                            errors.add(new ImportErrorRow(rowNum, "id_asn", "ID ASN/NIP tidak boleh kosong"));
+                        if (nip.isEmpty()) {
+                            errors.add(new ImportErrorRow(rowNum, "nip", "NIP tidak boleh kosong"));
                             rowHasError = true;
-                        } else {
-                            try {
-                                idAsn = Long.parseLong(idAsnStr);
-                            } catch (NumberFormatException e) {
-                                errors.add(new ImportErrorRow(rowNum, "id_asn", "ID ASN/NIP harus berupa angka"));
-                                rowHasError = true;
-                            }
                         }
 
                         LocalDate tmtJab = null;
@@ -202,7 +196,7 @@ public class ImportService {
                         Integer idJenisKelamin = resolveJenisKelamin(jenisKelamin, jenisKelaminCache);
                         Integer idPokja = resolveWilayahPokja(wilayahPokja, wilayahPokjaCache);
                         Integer idWilker = resolveWilayahBkn(wilkerBkn, idPokja, noUrutWilker, wilayahBknCache);
-                        Integer idInstansi = resolveInstansi(instansiKerja, kategoriInstansi, idWilker, instansiCache);
+                        Integer idInstansi = resolveInstansi(instansiKerja, kategoriInstansi, jenisInstansi, idWilker, instansiCache);
                         Integer idPendidikan = resolvePendidikan(pendidikan, tingkatPendidikan, pendidikanCache);
                         Integer idNomenklatur = resolveNomenklatur(nomenklatur, nomenklaturCache);
                         Integer idJenisJf = resolveJenisJf(jenisJf, jenisJfCache);
@@ -218,7 +212,7 @@ public class ImportService {
                         Integer mkJab = parseMasaKerja(mkJabatanStr);
 
                         batchList.add(new ImportRepository.AsnRecord(
-                                idAsn, idJenisAsn, idKedudukan, idJenisKelamin,
+                                nip, nama, idJenisAsn, idKedudukan, idJenisKelamin,
                                 idPendidikan, idInstansi, idJabatan, idGolongan, idJenisDiklat,
                                 tmtJab, mkJab, tmtGol, mkGol
                         ));
@@ -262,7 +256,8 @@ public class ImportService {
 
                         totalRows++;
 
-                        String idAsnStr = getCellValue(row, indices.idAsnIdx);
+                        String nip = getCellValue(row, indices.nipIdx);
+                        String nama = getCellValue(row, indices.namaIdx);
                         String jenisAsn = getCellValue(row, indices.jenisAsnIdx);
                         String kedudukanAsn = getCellValue(row, indices.kedudukanAsnIdx);
                         String jenisKelamin = getCellValue(row, indices.jenisKelaminIdx);
@@ -285,21 +280,14 @@ public class ImportService {
                         String wilayahPokja = getCellValue(row, indices.wilayahPokjaIdx);
                         String mkGolonganStr = getCellValue(row, indices.mkGolonganIdx);
                         String mkJabatanStr = getCellValue(row, indices.mkJabatanIdx);
+                        String jenisInstansi = getCellValue(row, indices.jenisInstansiIdx);
 
                         boolean rowHasError = false;
 
                         // Validation
-                        Long idAsn = null;
-                        if (idAsnStr.isEmpty()) {
-                            errors.add(new ImportErrorRow(rowNum + 1, "id_asn", "ID ASN/NIP tidak boleh kosong"));
+                        if (nip.isEmpty()) {
+                            errors.add(new ImportErrorRow(rowNum + 1, "nip", "NIP tidak boleh kosong"));
                             rowHasError = true;
-                        } else {
-                            try {
-                                idAsn = Long.parseLong(idAsnStr);
-                            } catch (NumberFormatException e) {
-                                errors.add(new ImportErrorRow(rowNum + 1, "id_asn", "ID ASN/NIP harus berupa angka"));
-                                rowHasError = true;
-                            }
                         }
 
                         LocalDate tmtJab = null;
@@ -341,7 +329,7 @@ public class ImportService {
                         Integer idJenisKelamin = resolveJenisKelamin(jenisKelamin, jenisKelaminCache);
                         Integer idPokja = resolveWilayahPokja(wilayahPokja, wilayahPokjaCache);
                         Integer idWilker = resolveWilayahBkn(wilkerBkn, idPokja, noUrutWilker, wilayahBknCache);
-                        Integer idInstansi = resolveInstansi(instansiKerja, kategoriInstansi, idWilker, instansiCache);
+                        Integer idInstansi = resolveInstansi(instansiKerja, kategoriInstansi, jenisInstansi, idWilker, instansiCache);
                         Integer idPendidikan = resolvePendidikan(pendidikan, tingkatPendidikan, pendidikanCache);
                         Integer idNomenklatur = resolveNomenklatur(nomenklatur, nomenklaturCache);
                         Integer idJenisJf = resolveJenisJf(jenisJf, jenisJfCache);
@@ -357,7 +345,7 @@ public class ImportService {
                         Integer mkJab = parseMasaKerja(mkJabatanStr);
 
                         batchList.add(new ImportRepository.AsnRecord(
-                                idAsn, idJenisAsn, idKedudukan, idJenisKelamin,
+                                nip, nama, idJenisAsn, idKedudukan, idJenisKelamin,
                                 idPendidikan, idInstansi, idJabatan, idGolongan, idJenisDiklat,
                                 tmtJab, mkJab, tmtGol, mkGol
                         ));
@@ -400,7 +388,8 @@ public class ImportService {
     // --- Parser Helpers ---
 
     private static class HeaderIndices {
-        int idAsnIdx = -1;
+        int nipIdx = -1;
+        int namaIdx = -1;
         int jenisAsnIdx = -1;
         int kedudukanAsnIdx = -1;
         int jenisKelaminIdx = -1;
@@ -423,11 +412,13 @@ public class ImportService {
         int wilayahPokjaIdx = -1;
         int mkGolonganIdx = -1;
         int mkJabatanIdx = -1;
+        int jenisInstansiIdx = -1;
     }
 
     private HeaderIndices resolveHeaderIndices(Map<String, Integer> headerMap) {
         HeaderIndices indices = new HeaderIndices();
-        indices.idAsnIdx = findHeaderIndex(headerMap, "id_asn", "id asn", "nip", "id");
+        indices.nipIdx = findHeaderIndex(headerMap, "nip", "id_asn", "id asn", "id");
+        indices.namaIdx = findHeaderIndex(headerMap, "nama", "nama_asn");
         indices.jenisAsnIdx = findHeaderIndex(headerMap, "jenis_asn", "jenis asn", "jenis");
         indices.kedudukanAsnIdx = findHeaderIndex(headerMap, "kedudukan_asn", "kedudukan asn", "kedudukan");
         indices.jenisKelaminIdx = findHeaderIndex(headerMap, "jenis_kelamin", "jenis kelamin", "kelamin", "gender");
@@ -448,8 +439,9 @@ public class ImportService {
         indices.wilkerBknIdx = findHeaderIndex(headerMap, "wilker_bkn", "wilker bkn", "wilker");
         indices.noUrutWilkerIdx = findHeaderIndex(headerMap, "no_urut_wilker", "no urut wilker", "no_urut");
         indices.wilayahPokjaIdx = findHeaderIndex(headerMap, "wilayah_pokja", "wilayah pokja", "pokja");
-        indices.mkGolonganIdx = findHeaderIndex(headerMap, "mk_golongan", "mk golongan", "masa_kerja_golongan", "masa kerja golongan");
-        indices.mkJabatanIdx = findHeaderIndex(headerMap, "mk_jabatan", "mk jabatan", "masa_kerja_jabatan", "masa kerja jabatan");
+        indices.mkGolonganIdx = findHeaderIndex(headerMap, "masa_kerja_golongan", "masa kerja golongan", "mk_golongan", "mk golongan");
+        indices.mkJabatanIdx = findHeaderIndex(headerMap, "masa_kerja_jabatan", "masa kerja jabatan", "mk_jabatan", "mk jabatan");
+        indices.jenisInstansiIdx = findHeaderIndex(headerMap, "jenis_instansi", "jenis instansi");
         return indices;
     }
 
@@ -642,11 +634,11 @@ public class ImportService {
         return id;
     }
 
-    private Integer resolveInstansi(String val, String kategori, Integer idWilker, Map<String, Integer> cache) {
+    private Integer resolveInstansi(String val, String kategori, String jenisInstansi, Integer idWilker, Map<String, Integer> cache) {
         if (val == null || val.trim().isEmpty()) return null;
         String key = val.trim().toLowerCase();
         if (cache.containsKey(key)) return cache.get(key);
-        Integer id = importRepository.insertInstansi(val, kategori, idWilker);
+        Integer id = importRepository.insertInstansi(val, kategori, jenisInstansi, idWilker);
         cache.put(key, id);
         return id;
     }

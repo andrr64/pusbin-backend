@@ -1,0 +1,1 @@
+ALTER TABLE pendidikan ALTER COLUMN tingkat TYPE VARCHAR(50);

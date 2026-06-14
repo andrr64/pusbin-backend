@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern;
 public class InputRequest {
     @Pattern(regexp = "^\\d{18}$", message = "NIP harus 18 digit angka")
     private String nip;
+    private String nama;
     private String jenisAsn;
     private String kedudukanAsn;
     private String jenisKelamin;

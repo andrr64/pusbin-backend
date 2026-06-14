@@ -48,7 +48,8 @@ public class AuthGuard extends OncePerRequestFilter {
     private static final List<String> PUBLIC_PATHS = List.of(
             "/api/v1/iam/login",
             "/api/v1/iam/register",
-            "/api/v1/iam/refresh"
+            "/api/v1/iam/refresh",
+            "/api/v1/public/"
     );
 
     @Override
