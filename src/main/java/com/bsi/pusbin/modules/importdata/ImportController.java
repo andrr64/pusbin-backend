@@ -2,6 +2,7 @@ package com.bsi.pusbin.modules.importdata;
 
 import com.bsi.pusbin.modules.importdata.schema.ImportResponse;
 import com.bsi.pusbin.modules.importdata.schema.ImportResult;
+import com.bsi.pusbin.shared.security.Auth;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+@Auth
 @RestController
 @RequestMapping("/api/v1/import")
 @RequiredArgsConstructor

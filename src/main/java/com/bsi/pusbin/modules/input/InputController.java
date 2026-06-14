@@ -4,6 +4,7 @@ import com.bsi.pusbin.modules.input.schema.InputPageResponse;
 import com.bsi.pusbin.modules.input.schema.InputRequest;
 import com.bsi.pusbin.modules.input.schema.InputResponse;
 import com.bsi.pusbin.shared.response.APIResponse;
+import com.bsi.pusbin.shared.security.Auth;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
+@Auth
 @RestController
 @RequestMapping("/api/v1/input")
 @RequiredArgsConstructor

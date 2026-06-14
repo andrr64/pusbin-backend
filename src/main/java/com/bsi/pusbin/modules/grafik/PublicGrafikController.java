@@ -3,18 +3,16 @@ package com.bsi.pusbin.modules.grafik;
 import com.bsi.pusbin.modules.filter.schema.FilterRequest;
 import com.bsi.pusbin.modules.grafik.schema.ChartResponse;
 import com.bsi.pusbin.shared.response.APIResponse;
-import com.bsi.pusbin.shared.security.Auth;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Auth
 @RestController
-@RequestMapping("/api/v1/grafik")
+@RequestMapping("/api/v1/public/grafik")
 @RequiredArgsConstructor
-public class GrafikController {
+public class PublicGrafikController {
 
     private final GrafikService service;
 
@@ -90,4 +88,3 @@ public class GrafikController {
         return ResponseEntity.ok(APIResponse.ok(response));
     }
 }
-

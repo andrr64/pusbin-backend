@@ -2,6 +2,7 @@ package com.bsi.pusbin.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.bsi.pusbin.shared.response.APIResponse;
+import com.bsi.pusbin.shared.security.AuthGuard;
 import com.bsi.pusbin.shared.security.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +30,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
+    private final AuthGuard authGuard;
     private final ObjectMapper objectMapper;
 
     @Value("${app.cors.allowed-origins}")
@@ -73,7 +75,8 @@ public class SecurityConfig {
                 .contentSecurityPolicy(csp -> csp
                     .policyDirectives("default-src 'none'; frame-ancestors 'none'"))
             )
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterAfter(authGuard, JwtFilter.class);
         return http.build();
     }
 
