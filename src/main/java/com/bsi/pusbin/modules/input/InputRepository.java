@@ -248,18 +248,18 @@ public class InputRepository {
         jdbc.update(sql, params);
     }
 
-    private Integer resolveJenisAsn(String val) { return val == null || val.isEmpty() ? null : importRepository.insertJenisAsn(val); }
-    private Integer resolveKedudukanAsn(String val) { return val == null || val.isEmpty() ? null : importRepository.insertKedudukanAsn(val); }
-    private Integer resolveJenisKelamin(String val) { return val == null || val.isEmpty() ? null : importRepository.insertJenisKelamin(val); }
-    private Integer resolveWilayahPokja(String val) { return val == null || val.isEmpty() ? null : importRepository.insertWilayahPokja(val); }
-    private Integer resolveWilayahBkn(String val, Integer idPokja, Integer noUrut) { return val == null || val.isEmpty() ? null : importRepository.insertWilayahBkn(val, idPokja, noUrut); }
-    private Integer resolveInstansi(String val, String kategori, Integer idWilker) { return val == null || val.isEmpty() ? null : importRepository.insertInstansi(val, kategori, null, idWilker); }
-    private Integer resolvePendidikan(String val, String tingkat) { return val == null || val.isEmpty() ? null : importRepository.insertPendidikan(val, tingkat); }
-    private Integer resolveNomenklatur(String val) { return val == null || val.isEmpty() ? null : importRepository.insertNomenklatur(val); }
-    private Integer resolveJenisJf(String val) { return val == null || val.isEmpty() ? null : importRepository.insertJenisJf(val); }
-    private Integer resolveJabatan(String val, String jenjang, Integer idNom, Integer idJf) { return val == null || val.isEmpty() ? null : importRepository.insertJabatan(val, jenjang, idNom, idJf); }
-    private Integer resolveGolongan(String val) { return val == null || val.isEmpty() ? null : importRepository.insertGolongan(val); }
-    private Integer resolveJenisDiklat(String val) { return val == null || val.isEmpty() ? null : importRepository.insertJenisDiklat(val); }
+    private Integer resolveJenisAsn(String val) { return val == null || val.isEmpty() ? null : importRepository.getOrInsertJenisAsn(val); }
+    private Integer resolveKedudukanAsn(String val) { return val == null || val.isEmpty() ? null : importRepository.getOrInsertKedudukanAsn(val); }
+    private Integer resolveJenisKelamin(String val) { return val == null || val.isEmpty() ? null : importRepository.getOrInsertJenisKelamin(val); }
+    private Integer resolveWilayahPokja(String val) { return val == null || val.isEmpty() ? null : importRepository.getOrInsertWilayahPokja(val); }
+    private Integer resolveWilayahBkn(String val, Integer idPokja, Integer noUrut) { return val == null || val.isEmpty() ? null : importRepository.getOrInsertWilayahBkn(val, idPokja, noUrut); }
+    private Integer resolveInstansi(String val, String kategori, Integer idWilker) { return val == null || val.isEmpty() ? null : importRepository.getOrInsertInstansi(val, kategori, null, idWilker); }
+    private Integer resolvePendidikan(String val, String tingkat) { return val == null || val.isEmpty() ? null : importRepository.getOrInsertPendidikan(val, tingkat); }
+    private Integer resolveNomenklatur(String val) { return val == null || val.isEmpty() ? null : importRepository.getOrInsertNomenklatur(val); }
+    private Integer resolveJenisJf(String val) { return val == null || val.isEmpty() ? null : importRepository.getOrInsertJenisJf(val); }
+    private Integer resolveJabatan(String val, String jenjang, Integer idNom, Integer idJf) { return val == null || val.isEmpty() ? null : importRepository.getOrInsertJabatan(val, jenjang, idNom, idJf); }
+    private Integer resolveGolongan(String val) { return val == null || val.isEmpty() ? null : importRepository.getOrInsertGolongan(val); }
+    private Integer resolveJenisDiklat(String val) { return val == null || val.isEmpty() ? null : importRepository.getOrInsertJenisDiklat(val); }
 
     public void delete(Long id) {
         jdbc.update("DELETE FROM asn WHERE id_asn = :id", new MapSqlParameterSource("id", id));

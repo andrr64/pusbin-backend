@@ -184,112 +184,134 @@ public class ImportRepository {
 
     // --- On-the-fly Master Insert Methods ---
 
-    public Integer insertJenisAsn(String nama) {
-        String sqlInsert = "INSERT INTO jenis_asn (nama_jenis) VALUES (:nama)";
+    public Integer getOrInsertJenisAsn(String nama) {
         MapSqlParameterSource params = new MapSqlParameterSource("nama", nama.trim());
+        List<Integer> ids = jdbc.queryForList("SELECT id_jenis_asn FROM jenis_asn WHERE nama_jenis ILIKE :nama LIMIT 1", params, Integer.class);
+        if (!ids.isEmpty()) return ids.get(0);
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbc.update(sqlInsert, params, keyHolder, new String[]{"id_jenis_asn"});
+        jdbc.update("INSERT INTO jenis_asn (nama_jenis) VALUES (:nama)", params, keyHolder, new String[]{"id_jenis_asn"});
         return keyHolder.getKey() != null ? keyHolder.getKey().intValue() : null;
     }
 
-    public Integer insertKedudukanAsn(String nama) {
-        String sqlInsert = "INSERT INTO kedudukan_asn (nama_kedudukan) VALUES (:nama)";
+    public Integer getOrInsertKedudukanAsn(String nama) {
         MapSqlParameterSource params = new MapSqlParameterSource("nama", nama.trim());
+        List<Integer> ids = jdbc.queryForList("SELECT id_kedudukan FROM kedudukan_asn WHERE nama_kedudukan ILIKE :nama LIMIT 1", params, Integer.class);
+        if (!ids.isEmpty()) return ids.get(0);
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbc.update(sqlInsert, params, keyHolder, new String[]{"id_kedudukan"});
+        jdbc.update("INSERT INTO kedudukan_asn (nama_kedudukan) VALUES (:nama)", params, keyHolder, new String[]{"id_kedudukan"});
         return keyHolder.getKey() != null ? keyHolder.getKey().intValue() : null;
     }
 
-    public Integer insertJenisKelamin(String nama) {
-        String sqlInsert = "INSERT INTO jenis_kelamin (nama_kelamin) VALUES (:nama)";
+    public Integer getOrInsertJenisKelamin(String nama) {
         MapSqlParameterSource params = new MapSqlParameterSource("nama", nama.trim());
+        List<Integer> ids = jdbc.queryForList("SELECT id_jenis_kelamin FROM jenis_kelamin WHERE nama_kelamin ILIKE :nama LIMIT 1", params, Integer.class);
+        if (!ids.isEmpty()) return ids.get(0);
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbc.update(sqlInsert, params, keyHolder, new String[]{"id_jenis_kelamin"});
+        jdbc.update("INSERT INTO jenis_kelamin (nama_kelamin) VALUES (:nama)", params, keyHolder, new String[]{"id_jenis_kelamin"});
         return keyHolder.getKey() != null ? keyHolder.getKey().intValue() : null;
     }
 
-    public Integer insertWilayahPokja(String nama) {
-        String sqlInsert = "INSERT INTO wilayah_pokja (nama_pokja) VALUES (:nama)";
+    public Integer getOrInsertWilayahPokja(String nama) {
         MapSqlParameterSource params = new MapSqlParameterSource("nama", nama.trim());
+        List<Integer> ids = jdbc.queryForList("SELECT id_wilayah_pokja FROM wilayah_pokja WHERE nama_pokja ILIKE :nama LIMIT 1", params, Integer.class);
+        if (!ids.isEmpty()) return ids.get(0);
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbc.update(sqlInsert, params, keyHolder, new String[]{"id_wilayah_pokja"});
+        jdbc.update("INSERT INTO wilayah_pokja (nama_pokja) VALUES (:nama)", params, keyHolder, new String[]{"id_wilayah_pokja"});
         return keyHolder.getKey() != null ? keyHolder.getKey().intValue() : null;
     }
 
-    public Integer insertWilayahBkn(String nama, Integer idPokja, Integer noUrut) {
-        String sqlInsert = "INSERT INTO wilayah_bkn (nama_wilker, id_wilayah_pokja, no_urut) VALUES (:nama, :idPokja, :noUrut)";
+    public Integer getOrInsertWilayahBkn(String nama, Integer idPokja, Integer noUrut) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("nama", nama.trim())
                 .addValue("idPokja", idPokja)
                 .addValue("noUrut", noUrut);
+        List<Integer> ids = jdbc.queryForList("SELECT id_wilker FROM wilayah_bkn WHERE nama_wilker ILIKE :nama LIMIT 1", params, Integer.class);
+        if (!ids.isEmpty()) return ids.get(0);
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbc.update(sqlInsert, params, keyHolder, new String[]{"id_wilker"});
+        jdbc.update("INSERT INTO wilayah_bkn (nama_wilker, id_wilayah_pokja, no_urut) VALUES (:nama, :idPokja, :noUrut)", params, keyHolder, new String[]{"id_wilker"});
         return keyHolder.getKey() != null ? keyHolder.getKey().intValue() : null;
     }
 
-    public Integer insertInstansi(String nama, String kategori, String jenisInstansi, Integer idWilker) {
-        String sqlInsert = "INSERT INTO instansi (nama_instansi, kategori, jenis_instansi, id_wilker) VALUES (:nama, :kategori, :jenisInstansi, :idWilker)";
+    public Integer getOrInsertInstansi(String nama, String kategori, String jenisInstansi, Integer idWilker) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("nama", nama.trim())
                 .addValue("kategori", kategori != null ? kategori.trim() : null)
                 .addValue("jenisInstansi", jenisInstansi != null ? jenisInstansi.trim() : null)
                 .addValue("idWilker", idWilker);
+        List<Integer> ids = jdbc.queryForList("SELECT id_instansi FROM instansi WHERE nama_instansi ILIKE :nama LIMIT 1", params, Integer.class);
+        if (!ids.isEmpty()) return ids.get(0);
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbc.update(sqlInsert, params, keyHolder, new String[]{"id_instansi"});
+        jdbc.update("INSERT INTO instansi (nama_instansi, kategori, jenis_instansi, id_wilker) VALUES (:nama, :kategori, :jenisInstansi, :idWilker)", params, keyHolder, new String[]{"id_instansi"});
         return keyHolder.getKey() != null ? keyHolder.getKey().intValue() : null;
     }
 
-    public Integer insertPendidikan(String nama, String tingkat) {
-        String sqlInsert = "INSERT INTO pendidikan (nama_pendidikan, tingkat) VALUES (:nama, :tingkat)";
+    public Integer getOrInsertPendidikan(String nama, String tingkat) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("nama", nama.trim())
                 .addValue("tingkat", tingkat != null ? tingkat.trim() : null);
+        List<Integer> ids = jdbc.queryForList("SELECT id_pendidikan FROM pendidikan WHERE nama_pendidikan ILIKE :nama LIMIT 1", params, Integer.class);
+        if (!ids.isEmpty()) return ids.get(0);
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbc.update(sqlInsert, params, keyHolder, new String[]{"id_pendidikan"});
+        jdbc.update("INSERT INTO pendidikan (nama_pendidikan, tingkat) VALUES (:nama, :tingkat)", params, keyHolder, new String[]{"id_pendidikan"});
         return keyHolder.getKey() != null ? keyHolder.getKey().intValue() : null;
     }
 
-    public Integer insertNomenklatur(String nama) {
-        String sqlInsert = "INSERT INTO nomenklatur (nama_nomenklatur) VALUES (:nama)";
+    public Integer getOrInsertNomenklatur(String nama) {
         MapSqlParameterSource params = new MapSqlParameterSource("nama", nama.trim());
+        List<Integer> ids = jdbc.queryForList("SELECT id_nomenklatur FROM nomenklatur WHERE nama_nomenklatur ILIKE :nama LIMIT 1", params, Integer.class);
+        if (!ids.isEmpty()) return ids.get(0);
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbc.update(sqlInsert, params, keyHolder, new String[]{"id_nomenklatur"});
+        jdbc.update("INSERT INTO nomenklatur (nama_nomenklatur) VALUES (:nama)", params, keyHolder, new String[]{"id_nomenklatur"});
         return keyHolder.getKey() != null ? keyHolder.getKey().intValue() : null;
     }
 
-    public Integer insertJenisJf(String nama) {
-        String sqlInsert = "INSERT INTO jenis_jf (nama_jenis_jf) VALUES (:nama)";
+    public Integer getOrInsertJenisJf(String nama) {
         MapSqlParameterSource params = new MapSqlParameterSource("nama", nama.trim());
+        List<Integer> ids = jdbc.queryForList("SELECT id_jenis_jf FROM jenis_jf WHERE nama_jenis_jf ILIKE :nama LIMIT 1", params, Integer.class);
+        if (!ids.isEmpty()) return ids.get(0);
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbc.update(sqlInsert, params, keyHolder, new String[]{"id_jenis_jf"});
+        jdbc.update("INSERT INTO jenis_jf (nama_jenis_jf) VALUES (:nama)", params, keyHolder, new String[]{"id_jenis_jf"});
         return keyHolder.getKey() != null ? keyHolder.getKey().intValue() : null;
     }
 
-    public Integer insertJabatan(String nama, String jenjang, Integer idNomenklatur, Integer idJenisJf) {
-        String sqlInsert = "INSERT INTO jabatan (nama_jabatan, jenjang, id_nomenklatur, id_jenis_jf) VALUES (:nama, :jenjang, :idNomenklatur, :idJenisJf)";
+    public Integer getOrInsertJabatan(String nama, String jenjang, Integer idNomenklatur, Integer idJenisJf) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("nama", nama.trim())
                 .addValue("jenjang", jenjang != null ? jenjang.trim() : null)
                 .addValue("idNomenklatur", idNomenklatur)
                 .addValue("idJenisJf", idJenisJf);
+        
+        String sqlSelect = "SELECT id_jabatan FROM jabatan WHERE nama_jabatan ILIKE :nama ";
+        if (jenjang != null && !jenjang.trim().isEmpty()) {
+            sqlSelect += "AND jenjang ILIKE :jenjang ";
+        } else {
+            sqlSelect += "AND (jenjang IS NULL OR jenjang = '') ";
+        }
+        sqlSelect += "LIMIT 1";
+
+        List<Integer> ids = jdbc.queryForList(sqlSelect, params, Integer.class);
+        if (!ids.isEmpty()) return ids.get(0);
+        
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbc.update(sqlInsert, params, keyHolder, new String[]{"id_jabatan"});
+        jdbc.update("INSERT INTO jabatan (nama_jabatan, jenjang, id_nomenklatur, id_jenis_jf) VALUES (:nama, :jenjang, :idNomenklatur, :idJenisJf)", params, keyHolder, new String[]{"id_jabatan"});
         return keyHolder.getKey() != null ? keyHolder.getKey().intValue() : null;
     }
 
-    public Integer insertGolongan(String nama) {
-        String sqlInsert = "INSERT INTO golongan (golongan_ruang) VALUES (:nama)";
+    public Integer getOrInsertGolongan(String nama) {
         MapSqlParameterSource params = new MapSqlParameterSource("nama", nama.trim());
+        List<Integer> ids = jdbc.queryForList("SELECT id_golongan FROM golongan WHERE golongan_ruang ILIKE :nama LIMIT 1", params, Integer.class);
+        if (!ids.isEmpty()) return ids.get(0);
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbc.update(sqlInsert, params, keyHolder, new String[]{"id_golongan"});
+        jdbc.update("INSERT INTO golongan (golongan_ruang) VALUES (:nama)", params, keyHolder, new String[]{"id_golongan"});
         return keyHolder.getKey() != null ? keyHolder.getKey().intValue() : null;
     }
 
-    public Integer insertJenisDiklat(String nama) {
-        String sqlInsert = "INSERT INTO jenis_diklat (nama_jenis_diklat) VALUES (:nama)";
+    public Integer getOrInsertJenisDiklat(String nama) {
         MapSqlParameterSource params = new MapSqlParameterSource("nama", nama.trim());
+        List<Integer> ids = jdbc.queryForList("SELECT id_jenis_diklat FROM jenis_diklat WHERE nama_jenis_diklat ILIKE :nama LIMIT 1", params, Integer.class);
+        if (!ids.isEmpty()) return ids.get(0);
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbc.update(sqlInsert, params, keyHolder, new String[]{"id_jenis_diklat"});
+        jdbc.update("INSERT INTO jenis_diklat (nama_jenis_diklat) VALUES (:nama)", params, keyHolder, new String[]{"id_jenis_diklat"});
         return keyHolder.getKey() != null ? keyHolder.getKey().intValue() : null;
     }
 

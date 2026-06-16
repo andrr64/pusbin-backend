@@ -593,7 +593,7 @@ public class ImportService {
         if (val == null || val.trim().isEmpty()) return null;
         String key = val.trim().toLowerCase();
         if (cache.containsKey(key)) return cache.get(key);
-        Integer id = importRepository.insertJenisAsn(val);
+        Integer id = importRepository.getOrInsertJenisAsn(val);
         cache.put(key, id);
         return id;
     }
@@ -602,7 +602,7 @@ public class ImportService {
         if (val == null || val.trim().isEmpty()) return null;
         String key = val.trim().toLowerCase();
         if (cache.containsKey(key)) return cache.get(key);
-        Integer id = importRepository.insertKedudukanAsn(val);
+        Integer id = importRepository.getOrInsertKedudukanAsn(val);
         cache.put(key, id);
         return id;
     }
@@ -611,7 +611,7 @@ public class ImportService {
         if (val == null || val.trim().isEmpty()) return null;
         String key = val.trim().toLowerCase();
         if (cache.containsKey(key)) return cache.get(key);
-        Integer id = importRepository.insertJenisKelamin(val);
+        Integer id = importRepository.getOrInsertJenisKelamin(val);
         cache.put(key, id);
         return id;
     }
@@ -620,7 +620,7 @@ public class ImportService {
         if (val == null || val.trim().isEmpty()) return null;
         String key = val.trim().toLowerCase();
         if (cache.containsKey(key)) return cache.get(key);
-        Integer id = importRepository.insertWilayahPokja(val);
+        Integer id = importRepository.getOrInsertWilayahPokja(val);
         cache.put(key, id);
         return id;
     }
@@ -629,7 +629,7 @@ public class ImportService {
         if (val == null || val.trim().isEmpty()) return null;
         String key = val.trim().toLowerCase();
         if (cache.containsKey(key)) return cache.get(key);
-        Integer id = importRepository.insertWilayahBkn(val, idPokja, noUrut);
+        Integer id = importRepository.getOrInsertWilayahBkn(val, idPokja, noUrut);
         cache.put(key, id);
         return id;
     }
@@ -638,7 +638,7 @@ public class ImportService {
         if (val == null || val.trim().isEmpty()) return null;
         String key = val.trim().toLowerCase();
         if (cache.containsKey(key)) return cache.get(key);
-        Integer id = importRepository.insertInstansi(val, kategori, jenisInstansi, idWilker);
+        Integer id = importRepository.getOrInsertInstansi(val, kategori, jenisInstansi, idWilker);
         cache.put(key, id);
         return id;
     }
@@ -647,7 +647,7 @@ public class ImportService {
         if (val == null || val.trim().isEmpty()) return null;
         String key = val.trim().toLowerCase();
         if (cache.containsKey(key)) return cache.get(key);
-        Integer id = importRepository.insertPendidikan(val, tingkat);
+        Integer id = importRepository.getOrInsertPendidikan(val, tingkat);
         cache.put(key, id);
         return id;
     }
@@ -656,7 +656,7 @@ public class ImportService {
         if (val == null || val.trim().isEmpty()) return null;
         String key = val.trim().toLowerCase();
         if (cache.containsKey(key)) return cache.get(key);
-        Integer id = importRepository.insertNomenklatur(val);
+        Integer id = importRepository.getOrInsertNomenklatur(val);
         cache.put(key, id);
         return id;
     }
@@ -665,7 +665,7 @@ public class ImportService {
         if (val == null || val.trim().isEmpty()) return null;
         String key = val.trim().toLowerCase();
         if (cache.containsKey(key)) return cache.get(key);
-        Integer id = importRepository.insertJenisJf(val);
+        Integer id = importRepository.getOrInsertJenisJf(val);
         cache.put(key, id);
         return id;
     }
@@ -674,7 +674,7 @@ public class ImportService {
         if (val == null || val.trim().isEmpty()) return null;
         String key = val.trim().toLowerCase() + "||" + (jenjang == null ? "" : jenjang.trim().toLowerCase());
         if (cache.containsKey(key)) return cache.get(key);
-        Integer id = importRepository.insertJabatan(val, jenjang, idNomenklatur, idJenisJf);
+        Integer id = importRepository.getOrInsertJabatan(val, jenjang, idNomenklatur, idJenisJf);
         cache.put(key, id);
         return id;
     }
@@ -683,7 +683,7 @@ public class ImportService {
         if (val == null || val.trim().isEmpty()) return null;
         String key = val.trim().toLowerCase();
         if (cache.containsKey(key)) return cache.get(key);
-        Integer id = importRepository.insertGolongan(val);
+        Integer id = importRepository.getOrInsertGolongan(val);
         cache.put(key, id);
         return id;
     }
@@ -692,7 +692,7 @@ public class ImportService {
         if (val == null || val.trim().isEmpty()) return null;
         String key = val.trim().toLowerCase();
         if (cache.containsKey(key)) return cache.get(key);
-        Integer id = importRepository.insertJenisDiklat(val);
+        Integer id = importRepository.getOrInsertJenisDiklat(val);
         cache.put(key, id);
         return id;
     }
