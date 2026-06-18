@@ -107,7 +107,7 @@ public class InputRepository {
         MapSqlParameterSource params = new MapSqlParameterSource();
 
         if (search != null && !search.trim().isEmpty()) {
-            sql.append(" WHERE ja.nama_jenis ILIKE :search OR i.nama_instansi ILIKE :search OR j.nama_jabatan ILIKE :search");
+            sql.append(" WHERE a.nama ILIKE :search OR a.nip ILIKE :search OR ja.nama_jenis ILIKE :search OR i.nama_instansi ILIKE :search OR j.nama_jabatan ILIKE :search");
             params.addValue("search", "%" + search + "%");
         }
 
@@ -126,7 +126,7 @@ public class InputRepository {
             sql.append(" LEFT JOIN jenis_asn ja ON a.id_jenis_asn = ja.id_jenis_asn ");
             sql.append(" LEFT JOIN instansi i ON a.id_instansi = i.id_instansi ");
             sql.append(" LEFT JOIN jabatan j ON a.id_jabatan = j.id_jabatan ");
-            sql.append(" WHERE ja.nama_jenis ILIKE :search OR i.nama_instansi ILIKE :search OR j.nama_jabatan ILIKE :search");
+            sql.append(" WHERE a.nama ILIKE :search OR a.nip ILIKE :search OR ja.nama_jenis ILIKE :search OR i.nama_instansi ILIKE :search OR j.nama_jabatan ILIKE :search");
             params.addValue("search", "%" + search + "%");
         }
 
