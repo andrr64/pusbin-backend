@@ -65,8 +65,10 @@ public class TableService {
         if (req.jenisInstansiId() != null) {
             for (Integer id : req.jenisInstansiId()) {
                 if (id == Math.abs("Instansi Pusat".hashCode()) + 100 || id == Math.abs("Pusat".hashCode()) + 100) {
+                    jenisInstansiList.add("Instansi Pusat");
                     jenisInstansiList.add("Pusat");
                 } else if (id == Math.abs("Instansi Daerah".hashCode()) + 100) {
+                    jenisInstansiList.add("Instansi Daerah");
                     jenisInstansiList.add("Daerah Provinsi");
                     jenisInstansiList.add("Daerah Kabupaten");
                     jenisInstansiList.add("Daerah Kota");

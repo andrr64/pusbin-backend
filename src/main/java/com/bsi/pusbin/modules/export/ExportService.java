@@ -430,8 +430,10 @@ public class ExportService {
         if (req.jenisInstansiId() != null) {
             for (Integer id : req.jenisInstansiId()) {
                 if (id == Math.abs("Instansi Pusat".hashCode()) + 100 || id == Math.abs("Pusat".hashCode()) + 100) {
+                    names.add("Instansi Pusat");
                     names.add("Pusat");
                 } else if (id == Math.abs("Instansi Daerah".hashCode()) + 100) {
+                    names.add("Instansi Daerah");
                     names.add("Daerah");
                 } else if (id == Math.abs("Daerah Provinsi".hashCode()) + 100) {
                     names.add("Daerah Provinsi");
