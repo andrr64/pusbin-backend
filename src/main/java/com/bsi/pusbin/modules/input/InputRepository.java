@@ -29,6 +29,7 @@ public class InputRepository {
         res.setJenisKelamin(rs.getString("jenis_kelamin"));
         res.setInstansiKerja(rs.getString("instansi_kerja"));
         res.setKategoriInstansi(rs.getString("kategori_instansi"));
+        res.setJenisInstansi(rs.getString("jenis_instansi"));
         res.setTingkatPendidikan(rs.getString("tingkat_pendidikan"));
         res.setPendidikan(rs.getString("pendidikan"));
         res.setJabatan(rs.getString("jabatan"));
@@ -69,6 +70,7 @@ public class InputRepository {
                 jk.nama_kelamin AS jenis_kelamin,
                 i.nama_instansi AS instansi_kerja,
                 i.kategori AS kategori_instansi,
+                i.jenis_instansi AS jenis_instansi,
                 p.tingkat AS tingkat_pendidikan,
                 p.nama_pendidikan AS pendidikan,
                 j.nama_jabatan AS jabatan,
