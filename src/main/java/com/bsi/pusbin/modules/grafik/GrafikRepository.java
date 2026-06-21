@@ -226,8 +226,8 @@ public class GrafikRepository {
 
         StringBuilder sql = new StringBuilder("""
                     SELECT
-                        COALESCE(i.jenis_instansi, 'Tanpa Jenis Instansi') AS category,
-                        COALESCE(ja.nama_jenis, 'Tanpa Jenis') AS seriesLabel,
+                        COALESCE(NULLIF(TRIM(i.jenis_instansi), ''), 'Tanpa Jenis Instansi') AS category,
+                        COALESCE(NULLIF(TRIM(ja.nama_jenis), ''), 'Tanpa Jenis') AS seriesLabel,
                         COUNT(a.id_asn) AS value
                     FROM asn a
                     LEFT JOIN instansi i ON a.id_instansi = i.id_instansi
@@ -415,8 +415,8 @@ public class GrafikRepository {
 
         StringBuilder sql = new StringBuilder("""
                     SELECT
-                        COALESCE(jj.nama_jenis_jf, 'Tanpa Kategori') AS category,
-                        COALESCE(ja.nama_jenis, 'Tanpa Jenis') AS seriesLabel,
+                        COALESCE(NULLIF(TRIM(jj.nama_jenis_jf), ''), 'Tanpa Kategori') AS category,
+                        COALESCE(NULLIF(TRIM(ja.nama_jenis), ''), 'Tanpa Jenis') AS seriesLabel,
                         COUNT(a.id_asn) AS value
                     FROM asn a
                     LEFT JOIN jabatan j ON a.id_jabatan = j.id_jabatan

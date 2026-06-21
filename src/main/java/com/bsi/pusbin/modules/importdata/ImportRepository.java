@@ -145,13 +145,18 @@ public class ImportRepository {
     }
 
     public Map<String, Integer> getJabatanMap() {
-        String sql = "SELECT id_jabatan, nama_jabatan, jenjang FROM jabatan WHERE nama_jabatan IS NOT NULL";
+        String sql = "SELECT id_jabatan, nama_jabatan, jenjang, id_nomenklatur, id_jenis_jf FROM jabatan WHERE nama_jabatan IS NOT NULL";
         List<Map<String, Object>> rows = jdbc.queryForList(sql, new MapSqlParameterSource());
         Map<String, Integer> map = new HashMap<>();
         for (Map<String, Object> r : rows) {
             String name = (String) r.get("nama_jabatan");
             String jenjang = (String) r.get("jenjang");
-            String key = name.trim().toLowerCase() + "||" + (jenjang == null ? "" : jenjang.trim().toLowerCase());
+            Number idNomObj = (Number) r.get("id_nomenklatur");
+            Number idJfObj = (Number) r.get("id_jenis_jf");
+            String idNom = idNomObj != null ? String.valueOf(idNomObj.intValue()) : "null";
+            String idJf = idJfObj != null ? String.valueOf(idJfObj.intValue()) : "null";
+            
+            String key = name.trim().toLowerCase() + "||" + (jenjang == null ? "" : jenjang.trim().toLowerCase()) + "||" + idNom + "||" + idJf;
             Integer id = ((Number) r.get("id_jabatan")).intValue();
             map.put(key, id);
         }
@@ -297,19 +302,21 @@ public class ImportRepository {
         } else {
             sqlSelect += "AND (jenjang IS NULL OR jenjang = '') ";
         }
+        if (idNomenklatur != null) {
+            sqlSelect += "AND id_nomenklatur = :idNomenklatur ";
+        } else {
+            sqlSelect += "AND id_nomenklatur IS NULL ";
+        }
+        if (idJenisJf != null) {
+            sqlSelect += "AND id_jenis_jf = :idJenisJf ";
+        } else {
+            sqlSelect += "AND id_jenis_jf IS NULL ";
+        }
         sqlSelect += "LIMIT 1";
 
         List<Integer> ids = jdbc.queryForList(sqlSelect, params, Integer.class);
         if (!ids.isEmpty()) {
-            Integer existingId = ids.get(0);
-            // Update id_jenis_jf and id_nomenklatur on the existing record
-            // so the user's selection is not silently discarded
-            MapSqlParameterSource updateParams = new MapSqlParameterSource()
-                    .addValue("id", existingId)
-                    .addValue("idJenisJf", idJenisJf)
-                    .addValue("idNomenklatur", idNomenklatur);
-            jdbc.update("UPDATE jabatan SET id_jenis_jf = :idJenisJf, id_nomenklatur = :idNomenklatur WHERE id_jabatan = :id", updateParams);
-            return existingId;
+            return ids.get(0);
         }
         
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();

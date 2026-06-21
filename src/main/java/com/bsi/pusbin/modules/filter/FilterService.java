@@ -194,7 +194,11 @@ public class FilterService {
         );
         for (FilterRow r : jabatanRows) {
             if (r.getIdJabatan() != null && r.getNamaJabatan() != null) {
-                jabatanSet.add(List.of(r.getNamaJabatan(), r.getIdJabatan()));
+                String label = r.getNamaJabatan();
+                if (r.getNamaNomenklatur() != null && !r.getNamaNomenklatur().trim().isEmpty()) {
+                    label += " (" + r.getNamaNomenklatur().trim() + ")";
+                }
+                jabatanSet.add(List.of(label, r.getIdJabatan()));
             }
         }
 

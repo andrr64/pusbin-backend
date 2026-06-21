@@ -50,6 +50,10 @@ public class IamService {
         // 1. Periksa laju request (Rate Limit) IP Address pengirim
         rateLimiter.check("register", ip);
         
+        if (req.nip() == null || !req.nip().trim().matches("^\\d{18}$")) {
+            throw new IllegalArgumentException("NIP harus terdiri dari 18 digit angka");
+        }
+        
         // 2. Validasi apakah NIP sudah pernah terdaftar di database
         if (iamRepository.existsByNip(req.nip())) {
             throw new DuplicateResourceException("NIP sudah terdaftar");

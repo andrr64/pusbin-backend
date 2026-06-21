@@ -672,7 +672,7 @@ public class ImportService {
 
     private Integer resolveJabatan(String val, String jenjang, Integer idNomenklatur, Integer idJenisJf, Map<String, Integer> cache) {
         if (val == null || val.trim().isEmpty()) return null;
-        String key = val.trim().toLowerCase() + "||" + (jenjang == null ? "" : jenjang.trim().toLowerCase());
+        String key = val.trim().toLowerCase() + "||" + (jenjang == null ? "" : jenjang.trim().toLowerCase()) + "||" + idNomenklatur + "||" + idJenisJf;
         if (cache.containsKey(key)) return cache.get(key);
         Integer id = importRepository.getOrInsertJabatan(val, jenjang, idNomenklatur, idJenisJf);
         cache.put(key, id);
