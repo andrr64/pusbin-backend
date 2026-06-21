@@ -51,7 +51,11 @@ public class InputRepository {
         }
         
         Object mkJab = rs.getObject("mk_jabatan");
-        if (mkJab != null) res.setMkJabatan(((Number) mkJab).intValue());
+        if (mkJab != null) {
+            int mk = ((Number) mkJab).intValue();
+            res.setMkJabatan(mk);
+            res.setMasaKerjaJabatanString(mk >= 9 ? ">= 9 Tahun" : "< 9 Tahun");
+        }
         
         res.setTmtJabatan(rs.getString("tmt_jabatan"));
         res.setTmtGolru(rs.getString("tmt_golongan"));
@@ -148,7 +152,7 @@ public class InputRepository {
         Integer idJenisKelamin = resolveJenisKelamin(req.getJenisKelamin());
         Integer idPokja = resolveWilayahPokja(req.getWilayahPokja());
         Integer idWilker = resolveWilayahBkn(req.getWilkerBkn(), idPokja, null);
-        Integer idInstansi = resolveInstansi(req.getInstansiKerja(), req.getKategoriInstansi(), idWilker);
+        Integer idInstansi = resolveInstansi(req.getInstansiKerja(), req.getKategoriInstansi(), req.getJenisInstansi(), idWilker);
         Integer idPendidikan = resolvePendidikan(req.getPendidikan(), req.getTingkatPendidikan());
         Integer idNomenklatur = resolveNomenklatur(req.getNomenklatur());
         Integer idJenisJf = resolveJenisJf(req.getJenisJf());
@@ -198,7 +202,7 @@ public class InputRepository {
         Integer idJenisKelamin = resolveJenisKelamin(req.getJenisKelamin());
         Integer idPokja = resolveWilayahPokja(req.getWilayahPokja());
         Integer idWilker = resolveWilayahBkn(req.getWilkerBkn(), idPokja, null);
-        Integer idInstansi = resolveInstansi(req.getInstansiKerja(), req.getKategoriInstansi(), idWilker);
+        Integer idInstansi = resolveInstansi(req.getInstansiKerja(), req.getKategoriInstansi(), req.getJenisInstansi(), idWilker);
         Integer idPendidikan = resolvePendidikan(req.getPendidikan(), req.getTingkatPendidikan());
         Integer idNomenklatur = resolveNomenklatur(req.getNomenklatur());
         Integer idJenisJf = resolveJenisJf(req.getJenisJf());
@@ -255,7 +259,7 @@ public class InputRepository {
     private Integer resolveJenisKelamin(String val) { return val == null || val.isEmpty() ? null : importRepository.getOrInsertJenisKelamin(val); }
     private Integer resolveWilayahPokja(String val) { return val == null || val.isEmpty() ? null : importRepository.getOrInsertWilayahPokja(val); }
     private Integer resolveWilayahBkn(String val, Integer idPokja, Integer noUrut) { return val == null || val.isEmpty() ? null : importRepository.getOrInsertWilayahBkn(val, idPokja, noUrut); }
-    private Integer resolveInstansi(String val, String kategori, Integer idWilker) { return val == null || val.isEmpty() ? null : importRepository.getOrInsertInstansi(val, kategori, null, idWilker); }
+    private Integer resolveInstansi(String val, String kategori, String jenisInstansi, Integer idWilker) { return val == null || val.isEmpty() ? null : importRepository.getOrInsertInstansi(val, kategori, jenisInstansi, idWilker); }
     private Integer resolvePendidikan(String val, String tingkat) { return val == null || val.isEmpty() ? null : importRepository.getOrInsertPendidikan(val, tingkat); }
     private Integer resolveNomenklatur(String val) { return val == null || val.isEmpty() ? null : importRepository.getOrInsertNomenklatur(val); }
     private Integer resolveJenisJf(String val) { return val == null || val.isEmpty() ? null : importRepository.getOrInsertJenisJf(val); }

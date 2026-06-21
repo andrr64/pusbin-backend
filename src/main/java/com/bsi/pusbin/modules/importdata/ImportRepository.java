@@ -239,7 +239,17 @@ public class ImportRepository {
                 .addValue("jenisInstansi", jenisInstansi != null ? jenisInstansi.trim() : null)
                 .addValue("idWilker", idWilker);
         List<Integer> ids = jdbc.queryForList("SELECT id_instansi FROM instansi WHERE nama_instansi ILIKE :nama LIMIT 1", params, Integer.class);
-        if (!ids.isEmpty()) return ids.get(0);
+        if (!ids.isEmpty()) {
+            Integer existingId = ids.get(0);
+            // Update kategori, jenis_instansi and id_wilker on the existing record
+            MapSqlParameterSource updateParams = new MapSqlParameterSource()
+                    .addValue("id", existingId)
+                    .addValue("kategori", kategori != null ? kategori.trim() : null)
+                    .addValue("jenisInstansi", jenisInstansi != null ? jenisInstansi.trim() : null)
+                    .addValue("idWilker", idWilker);
+            jdbc.update("UPDATE instansi SET kategori = COALESCE(:kategori, kategori), jenis_instansi = COALESCE(:jenisInstansi, jenis_instansi), id_wilker = COALESCE(:idWilker, id_wilker) WHERE id_instansi = :id", updateParams);
+            return existingId;
+        }
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update("INSERT INTO instansi (nama_instansi, kategori, jenis_instansi, id_wilker) VALUES (:nama, :kategori, :jenisInstansi, :idWilker)", params, keyHolder, new String[]{"id_instansi"});
         return keyHolder.getKey() != null ? keyHolder.getKey().intValue() : null;
@@ -290,7 +300,17 @@ public class ImportRepository {
         sqlSelect += "LIMIT 1";
 
         List<Integer> ids = jdbc.queryForList(sqlSelect, params, Integer.class);
-        if (!ids.isEmpty()) return ids.get(0);
+        if (!ids.isEmpty()) {
+            Integer existingId = ids.get(0);
+            // Update id_jenis_jf and id_nomenklatur on the existing record
+            // so the user's selection is not silently discarded
+            MapSqlParameterSource updateParams = new MapSqlParameterSource()
+                    .addValue("id", existingId)
+                    .addValue("idJenisJf", idJenisJf)
+                    .addValue("idNomenklatur", idNomenklatur);
+            jdbc.update("UPDATE jabatan SET id_jenis_jf = :idJenisJf, id_nomenklatur = :idNomenklatur WHERE id_jabatan = :id", updateParams);
+            return existingId;
+        }
         
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update("INSERT INTO jabatan (nama_jabatan, jenjang, id_nomenklatur, id_jenis_jf) VALUES (:nama, :jenjang, :idNomenklatur, :idJenisJf)", params, keyHolder, new String[]{"id_jabatan"});

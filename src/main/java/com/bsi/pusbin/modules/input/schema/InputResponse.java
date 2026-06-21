@@ -13,7 +13,6 @@ public class InputResponse {
     private String instansiKerja;
     private String kategoriInstansi;
     private String jenisInstansi;
-    private String unitKerja;
     private String tingkatPendidikan;
     private String pendidikan;
     private String jabatan;
