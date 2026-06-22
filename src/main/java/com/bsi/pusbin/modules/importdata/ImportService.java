@@ -72,7 +72,7 @@ public class ImportService {
         Map<String, Integer> jenisKelaminCache = importRepository.getJenisKelaminMap();
         Map<String, Integer> wilayahPokjaCache = importRepository.getWilayahPokjaMap();
         Map<String, Integer> wilayahBknCache = importRepository.getWilayahBknMap();
-        Map<String, Integer> instansiCache = importRepository.getInstansiMap();
+        Map<String, Integer> instansiCache = new HashMap<>();
         Map<String, Integer> pendidikanCache = importRepository.getPendidikanMap();
         Map<String, Integer> nomenklaturCache = importRepository.getNomenklaturMap();
         Map<String, Integer> jenisJfCache = importRepository.getJenisJfMap();
