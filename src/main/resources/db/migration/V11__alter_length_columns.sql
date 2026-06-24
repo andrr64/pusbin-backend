@@ -1,0 +1,25 @@
+-- Migration V11: Alter length of various columns
+
+ALTER TABLE users ALTER COLUMN nip TYPE VARCHAR(20);
+ALTER TABLE users ALTER COLUMN password_hash TYPE VARCHAR(255);
+
+ALTER TABLE jenis_asn ALTER COLUMN nama_jenis TYPE VARCHAR(10);
+ALTER TABLE kedudukan_asn ALTER COLUMN nama_kedudukan TYPE VARCHAR(30);
+ALTER TABLE jenis_kelamin ALTER COLUMN nama_kelamin TYPE VARCHAR(14);
+ALTER TABLE nomenklatur ALTER COLUMN nama_nomenklatur TYPE VARCHAR(20);
+ALTER TABLE jenis_jf ALTER COLUMN nama_jenis_jf TYPE VARCHAR(25);
+ALTER TABLE jenis_diklat ALTER COLUMN nama_jenis_diklat TYPE VARCHAR(50);
+
+ALTER TABLE wilayah_pokja ALTER COLUMN nama_pokja TYPE VARCHAR(15);
+ALTER TABLE pendidikan ALTER COLUMN nama_pendidikan TYPE VARCHAR(70);
+
+ALTER TABLE wilayah_bkn ALTER COLUMN nama_wilker TYPE VARCHAR(60);
+
+ALTER TABLE jabatan ALTER COLUMN nama_jabatan TYPE VARCHAR(70);
+ALTER TABLE jabatan ALTER COLUMN jenjang TYPE VARCHAR(15);
+
+ALTER TABLE instansi ALTER COLUMN nama_instansi TYPE VARCHAR(100);
+ALTER TABLE instansi ALTER COLUMN kategori TYPE VARCHAR(40);
+ALTER TABLE instansi ALTER COLUMN jenis_instansi TYPE VARCHAR(30);
+
+ALTER TABLE asn ALTER COLUMN nama TYPE VARCHAR(70);
