@@ -274,6 +274,10 @@ public class InputRepository {
     private Integer resolveGolongan(String val) { return val == null || val.isEmpty() ? null : importRepository.getOrInsertGolongan(val); }
     private Integer resolveJenisDiklat(String val) { return val == null || val.isEmpty() ? null : importRepository.getOrInsertJenisDiklat(val); }
 
+    public void deleteAll() {
+        jdbc.getJdbcTemplate().update("DELETE FROM asn");
+    }
+
     public void delete(Long id) {
         jdbc.update("DELETE FROM asn WHERE id_asn = :id", new MapSqlParameterSource("id", id));
     }

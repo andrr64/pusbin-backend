@@ -45,6 +45,12 @@ public class InputController {
         return ResponseEntity.ok(APIResponse.ok(null, "Updated"));
     }
 
+    @DeleteMapping("/all")
+    public ResponseEntity<APIResponse<Void>> deleteAll() {
+        service.deleteAll();
+        return ResponseEntity.ok(APIResponse.ok(null, "Deleted All"));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<APIResponse<Void>> delete(@PathVariable Long id) {
         service.delete(id);

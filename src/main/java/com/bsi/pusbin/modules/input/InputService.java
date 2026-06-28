@@ -44,6 +44,10 @@ public class InputService {
         repository.update(id, req);
     }
 
+    public void deleteAll() {
+        repository.deleteAll();
+    }
+
     public void delete(Long id) {
         repository.delete(id);
     }
