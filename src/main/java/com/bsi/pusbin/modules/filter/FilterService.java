@@ -188,18 +188,41 @@ public class FilterService {
         }
 
         // 7. Fetch Nama Jabatan options (exclude namaJabatanId filter)
-        Set<List<Object>> jabatanSet = new HashSet<>();
+        // Collect distinct namaJabatan values, grouping multiple id_jabatan under the same name
+        Map<String, List<String>> distinctNamaJabatan = new LinkedHashMap<>();
         List<FilterRow> jabatanRows = filterRepository.fetchFilterRows(
                 req.instansiId(), req.jenisAsnId(), req.nomenklaturId(), jenjangList, kategoriList, req.wilayahPokjaId(), null, jenisInstansiList
         );
         for (FilterRow r : jabatanRows) {
             if (r.getIdJabatan() != null && r.getNamaJabatan() != null) {
-                String label = r.getNamaJabatan();
-                if (r.getNamaNomenklatur() != null && !r.getNamaNomenklatur().trim().isEmpty()) {
-                    label += " (" + r.getNamaNomenklatur().trim() + ")";
+                String rawJab = r.getNamaJabatan().trim();
+                String[] jenjangs = {
+                    " Ahli Pertama", " Ahli Madya", " Ahli Utama", " Ahli Muda",
+                    " JPT Pratama", " JPT Madya", " JPT Utama",
+                    " Administrator", " Pengawas", " Pelaksana",
+                    " Terampil", " Mahir", " Penyelia",
+                    " Pertama", " Muda", " Madya", " Utama"
+                };
+                for (String j : jenjangs) {
+                    if (rawJab.endsWith(j)) {
+                        rawJab = rawJab.substring(0, rawJab.length() - j.length()).trim();
+                        break;
+                    }
                 }
-                jabatanSet.add(List.of(label, r.getIdJabatan()));
+                String namaJab = rawJab;
+                
+        if (!namaJab.isEmpty()) {
+                    List<String> idList = distinctNamaJabatan.computeIfAbsent(namaJab, k -> new java.util.ArrayList<>());
+                    String idStr = String.valueOf(r.getIdJabatan());
+                    if (!idList.contains(idStr)) {
+                        idList.add(idStr);
+                    }
+                }
             }
+        }
+        Set<List<Object>> jabatanSet = new HashSet<>();
+        for (Map.Entry<String, List<String>> entry : distinctNamaJabatan.entrySet()) {
+            jabatanSet.add(List.of(entry.getKey(), String.join(",", entry.getValue())));
         }
 
         // 8. Fetch Jenis Instansi options (exclude jenisInstansi list/id filter)

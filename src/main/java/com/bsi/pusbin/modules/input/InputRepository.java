@@ -77,7 +77,14 @@ public class InputRepository {
                 i.jenis_instansi AS jenis_instansi,
                 p.tingkat AS tingkat_pendidikan,
                 p.nama_pendidikan AS pendidikan,
-                j.nama_jabatan AS jabatan,
+                CASE 
+                    WHEN j.jenjang IS NOT NULL AND j.jenjang <> '' THEN 
+                        CASE 
+                            WHEN j.nama_jabatan LIKE '%' || j.jenjang THEN j.nama_jabatan 
+                            ELSE j.nama_jabatan || ' ' || j.jenjang 
+                        END
+                    ELSE j.nama_jabatan 
+                END AS jabatan,
                 j.jenjang AS jenjang,
                 jf.nama_jenis_jf AS jenis_jf,
                 j.nama_jabatan AS nama_jabatan,
