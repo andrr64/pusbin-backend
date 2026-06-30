@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  * - Mengapa menggunakan Cookie HttpOnly + Secure?: Menyimpan Access Token di Cookie jauh lebih aman dibanding 
  *   di LocalStorage/SessionStorage karena cookie HttpOnly TIDAK BISA diakses oleh JavaScript client. 
  *   Hal ini melindung token dari serangan pencurian token lewat XSS (Cross-Site Scripting).
- * - IP Address Tracking: Kita mengambil alamat IP user lewat `httpReq.getRemoteAddr()` untuk kebutuhan
+ * - IP Address Tracking: Kita mengambil alamat IP admin lewat `httpReq.getRemoteAddr()` untuk kebutuhan
  *   Rate Limiting demi mencegah serangan Brute Force.
  */
 @RestController
@@ -31,7 +31,7 @@ public class IamController {
     private final IamService iamService;
 
     /**
-     * Endpoint untuk pendaftaran user baru.
+     * Endpoint untuk pendaftaran admin baru.
      * HTTP Method: POST
      */
     @PostMapping("/register")
@@ -44,7 +44,7 @@ public class IamController {
     }
 
     /**
-     * Endpoint untuk login user.
+     * Endpoint untuk login admin.
      * HTTP Method: POST
      * 
      * - HttpServletResponse httpRes: Kita butuh object response servlet asli untuk meletakkan cookie
@@ -80,7 +80,7 @@ public class IamController {
      * Endpoint untuk logout (keluar sistem).
      * HTTP Method: POST
      * 
-     * - @Auth: Memastikan endpoint logout hanya bisa diakses oleh user yang sudah otentik (login).
+     * - @Auth: Memastikan endpoint logout hanya bisa diakses oleh admin yang sudah otentik (login).
      */
     @PostMapping("/logout")
     @Auth

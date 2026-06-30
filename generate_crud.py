@@ -13,7 +13,7 @@ tables = {
     "WilayahBkn": {"table": "wilayah_bkn", "pk": "id_wilker", "fields": {"id_wilker": "Integer", "nama_wilker": "String", "no_urut": "Integer", "id_wilayah_pokja": "Integer"}},
     "Jabatan": {"table": "jabatan", "pk": "id_jabatan", "fields": {"id_jabatan": "Integer", "id_nomenklatur": "Integer", "id_jenis_jf": "Integer", "nama_jabatan": "String", "jenjang": "String"}},
     "Instansi": {"table": "instansi", "pk": "id_instansi", "fields": {"id_instansi": "Integer", "id_wilker": "Integer", "nama_instansi": "String", "kategori": "String", "jenis_instansi": "String"}},
-    "Users": {"table": "users", "pk": "id", "fields": {"id": "Integer", "nip": "String", "password_hash": "String"}},
+    "Admin": {"table": "admin", "pk": "id", "fields": {"id": "Integer", "nip": "String", "password_hash": "String"}},
 }
 
 base_pkg = "com.bsi.pusbin.modules.input.master"

@@ -1,6 +1,6 @@
 package com.bsi.pusbin.modules.input.master;
 
-import com.bsi.pusbin.modules.input.master.schema.UsersDto;
+import com.bsi.pusbin.modules.input.master.schema.AdminDto;
 import com.bsi.pusbin.shared.exception.service.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,28 +10,28 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UsersService {
-    private final UsersRepository repository;
+public class AdminService {
+    private final AdminRepository repository;
 
     @Transactional(readOnly = true)
-    public List<UsersDto> findAll() {
+    public List<AdminDto> findAll() {
         return repository.findAll();
     }
 
     @Transactional(readOnly = true)
-    public UsersDto findById(Integer id) {
+    public AdminDto findById(Integer id) {
         return repository.findById(id).orElseThrow(() -> new BusinessException("Data not found"));
     }
 
     @Transactional
-    public UsersDto create(UsersDto dto) {
+    public AdminDto create(AdminDto dto) {
         Integer id = repository.insert(dto);
         dto.setId(id);
         return dto;
     }
 
     @Transactional
-    public UsersDto update(Integer id, UsersDto dto) {
+    public AdminDto update(Integer id, AdminDto dto) {
         findById(id); // ensure exists
         repository.update(id, dto);
         dto.setId(id);

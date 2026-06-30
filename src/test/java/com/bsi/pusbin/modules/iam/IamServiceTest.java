@@ -46,7 +46,7 @@ class IamServiceTest {
 
         iamService.register(new RegisterRequest("12345", "pass"), "127.0.0.1");
 
-        verify(iamRepository).saveUser("12345", "hashed");
+        verify(iamRepository).saveAdmin("12345", "hashed");
     }
 
     @Test
@@ -56,7 +56,7 @@ class IamServiceTest {
         assertThatThrownBy(() -> iamService.register(new RegisterRequest("12345", "pass"), "127.0.0.1"))
                 .isInstanceOf(DuplicateResourceException.class);
 
-        verify(iamRepository, never()).saveUser(any(), any());
+        verify(iamRepository, never()).saveAdmin(any(), any());
     }
 
     @Test
@@ -74,8 +74,8 @@ class IamServiceTest {
 
     @Test
     void login_happyPath_setsCookies() {
-        IamRepository.UserRecord user = new IamRepository.UserRecord(1, "12345", "hashed");
-        when(iamRepository.findByNip("12345")).thenReturn(Optional.of(user));
+        IamRepository.AdminRecord admin = new IamRepository.AdminRecord(1, "12345", "hashed");
+        when(iamRepository.findByNip("12345")).thenReturn(Optional.of(admin));
         when(passwordEncoder.matches("pass", "hashed")).thenReturn(true);
         when(jwtProvider.generateAccessToken("12345")).thenReturn("access");
         when(jwtProvider.generateRefreshToken()).thenReturn("refresh");
@@ -103,8 +103,8 @@ class IamServiceTest {
 
     @Test
     void login_wrongPassword_throwsUnauthorized() {
-        IamRepository.UserRecord user = new IamRepository.UserRecord(1, "12345", "hashed");
-        when(iamRepository.findByNip("12345")).thenReturn(Optional.of(user));
+        IamRepository.AdminRecord admin = new IamRepository.AdminRecord(1, "12345", "hashed");
+        when(iamRepository.findByNip("12345")).thenReturn(Optional.of(admin));
         when(passwordEncoder.matches("wrong", "hashed")).thenReturn(false);
 
         assertThatThrownBy(() -> iamService.login(new LoginRequest("12345", "wrong"), "127.0.0.1", new MockHttpServletResponse()))
@@ -133,8 +133,8 @@ class IamServiceTest {
         when(jwtProvider.hashRefreshToken("newRaw")).thenReturn("newHash");
         when(jwtProperties.getRefreshTokenExpiryMs()).thenReturn(259200000L);
         when(jwtProperties.getAccessTokenExpiryMs()).thenReturn(900000L);
-        IamRepository.UserRecord user = new IamRepository.UserRecord(1, "12345", "hashed");
-        when(iamRepository.findByNip("12345")).thenReturn(Optional.of(user));
+        IamRepository.AdminRecord admin = new IamRepository.AdminRecord(1, "12345", "hashed");
+        when(iamRepository.findByNip("12345")).thenReturn(Optional.of(admin));
 
         MockHttpServletResponse response = new MockHttpServletResponse();
         iamService.refresh("oldRaw", response);

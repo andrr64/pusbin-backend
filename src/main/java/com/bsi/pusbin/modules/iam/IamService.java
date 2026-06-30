@@ -44,7 +44,7 @@ public class IamService {
     private final RateLimiter rateLimiter;
 
     /**
-     * Mendaftarkan pengguna (user) baru ke sistem.
+     * Mendaftarkan pengguna (admin) baru ke sistem.
      */
     public void register(RegisterRequest req, String ip) {
         // 1. Periksa laju request (Rate Limit) IP Address pengirim
@@ -60,7 +60,7 @@ public class IamService {
         }
         
         // 3. Enkripsi password menggunakan Argon2, lalu simpan ke database
-        iamRepository.saveUser(req.nip(), passwordEncoder.encode(req.password()));
+        iamRepository.saveAdmin(req.nip(), passwordEncoder.encode(req.password()));
     }
 
     /**
@@ -74,15 +74,15 @@ public class IamService {
         //    Pertahanan ini tetap berlaku walau penyerang berganti-ganti alamat IP.
         rateLimiter.checkAccountLockout(req.nip());
 
-        // 3. Cari data user berdasarkan NIP
-        IamRepository.UserRecord user = iamRepository.findByNip(req.nip())
+        // 3. Cari data admin berdasarkan NIP
+        IamRepository.AdminRecord admin = iamRepository.findByNip(req.nip())
                 .orElseThrow(() -> {
                     rateLimiter.recordFailedLogin(req.nip());
                     return new UnauthorizedException("NIP atau password salah");
                 });
 
         // 4. Verifikasi apakah password cocok dengan hash yang tersimpan di DB
-        if (!passwordEncoder.matches(req.password(), user.passwordHash())) {
+        if (!passwordEncoder.matches(req.password(), admin.passwordHash())) {
             rateLimiter.recordFailedLogin(req.nip());
             throw new UnauthorizedException("NIP atau password salah");
         }
@@ -91,13 +91,13 @@ public class IamService {
         rateLimiter.resetFailedLogin(req.nip());
 
         // 6. Generate token JWT baru jika otentikasi sukses
-        String accessToken  = jwtProvider.generateAccessToken(user.nip());
+        String accessToken  = jwtProvider.generateAccessToken(admin.nip());
         String refreshToken = jwtProvider.generateRefreshToken(); // UUID acak
         String tokenHash    = jwtProvider.hashRefreshToken(refreshToken); // Hash satu-arah untuk disimpan di DB
         Timestamp expiresAt = Timestamp.from(Instant.now().plusMillis(jwtProperties.getRefreshTokenExpiryMs()));
 
         // 7. Simpan hash refresh token ke database
-        iamRepository.saveRefreshToken(user.id(), tokenHash, expiresAt);
+        iamRepository.saveRefreshToken(admin.id(), tokenHash, expiresAt);
 
         // 8. Set access_token dan refresh_token sebagai HttpOnly Cookies di response
         setTokenCookies(res, accessToken, refreshToken);
@@ -127,9 +127,9 @@ public class IamService {
         iamRepository.deleteRefreshToken(hash);
         
         // 5. Simpan refresh token yang baru ke database
-        IamRepository.UserRecord user = iamRepository.findByNip(nip)
-                .orElseThrow(() -> new UnauthorizedException("User tidak ditemukan"));
-        iamRepository.saveRefreshToken(user.id(), newHash, expiresAt);
+        IamRepository.AdminRecord admin = iamRepository.findByNip(nip)
+                .orElseThrow(() -> new UnauthorizedException("Admin tidak ditemukan"));
+        iamRepository.saveRefreshToken(admin.id(), newHash, expiresAt);
 
         // 6. Tulis cookie baru ke response
         setTokenCookies(res, newAccessToken, newRefreshToken);

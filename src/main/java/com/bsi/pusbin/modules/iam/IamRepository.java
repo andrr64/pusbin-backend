@@ -10,7 +10,7 @@ import java.util.Optional;
 
 /**
  * Repository untuk modul IAM.
- * Bertanggung jawab mengelola tabel `users` (nip dan password hash) 
+ * Bertanggung jawab mengelola tabel `admin` (nip dan password hash) 
  * serta tabel `refresh_tokens` (penyimpanan hash dari refresh token yang aktif).
  */
 @Repository
@@ -20,15 +20,15 @@ public class IamRepository {
     private final JdbcTemplate jdbc;
 
     /**
-     * Mencari data pengguna (UserRecord) berdasarkan NIP.
+     * Mencari data pengguna (AdminRecord) berdasarkan NIP.
      */
-    public Optional<UserRecord> findByNip(String nip) {
+    public Optional<AdminRecord> findByNip(String nip) {
         try {
-            UserRecord user = jdbc.queryForObject(
-                    "SELECT id, nip, password_hash FROM users WHERE nip = ?",
-                    (rs, i) -> new UserRecord(rs.getInt("id"), rs.getString("nip"), rs.getString("password_hash")),
+            AdminRecord admin = jdbc.queryForObject(
+                    "SELECT id, nip, password_hash FROM admin WHERE nip = ?",
+                    (rs, i) -> new AdminRecord(rs.getInt("id"), rs.getString("nip"), rs.getString("password_hash")),
                     nip);
-            return Optional.ofNullable(user);
+            return Optional.ofNullable(admin);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
@@ -38,24 +38,24 @@ public class IamRepository {
      * Memeriksa apakah NIP sudah terdaftar di database.
      */
     public boolean existsByNip(String nip) {
-        Integer count = jdbc.queryForObject("SELECT COUNT(*) FROM users WHERE nip = ?", Integer.class, nip);
+        Integer count = jdbc.queryForObject("SELECT COUNT(*) FROM admin WHERE nip = ?", Integer.class, nip);
         return count != null && count > 0;
     }
 
     /**
-     * Menyimpan data user baru ke database.
+     * Menyimpan data admin baru ke database.
      */
-    public void saveUser(String nip, String passwordHash) {
-        jdbc.update("INSERT INTO users (nip, password_hash) VALUES (?, ?)", nip, passwordHash);
+    public void saveAdmin(String nip, String passwordHash) {
+        jdbc.update("INSERT INTO admin (nip, password_hash) VALUES (?, ?)", nip, passwordHash);
     }
 
     /**
      * Menyimpan data refresh token baru.
      */
-    public void saveRefreshToken(int userId, String tokenHash, Timestamp expiresAt) {
+    public void saveRefreshToken(int adminId, String tokenHash, Timestamp expiresAt) {
         jdbc.update(
-                "INSERT INTO refresh_tokens (user_id, token_hash, expires_at) VALUES (?, ?, ?)",
-                userId, tokenHash, expiresAt);
+                "INSERT INTO refresh_tokens (admin_id, token_hash, expires_at) VALUES (?, ?, ?)",
+                adminId, tokenHash, expiresAt);
     }
 
     /**
@@ -70,7 +70,7 @@ public class IamRepository {
             String nip = jdbc.queryForObject(
                     """
                     SELECT u.nip FROM refresh_tokens rt
-                    JOIN users u ON rt.user_id = u.id
+                    JOIN admin u ON rt.admin_id = u.id
                     WHERE rt.token_hash = ? AND rt.expires_at > NOW()
                     """,
                     String.class,
@@ -89,8 +89,8 @@ public class IamRepository {
     }
 
     /**
-     * Representasi Java Record untuk baris data tabel `users`.
+     * Representasi Java Record untuk baris data tabel `admin`.
      */
-    record UserRecord(int id, String nip, String passwordHash) {}
+    record AdminRecord(int id, String nip, String passwordHash) {}
 }
 
