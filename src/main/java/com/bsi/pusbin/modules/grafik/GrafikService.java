@@ -200,7 +200,7 @@ public class GrafikService {
         Collections.sort(dates);
         seriesLabels.sort(String::compareToIgnoreCase);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMM yyyy", new Locale("id", "ID"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMM yyyy", Locale.of("id", "ID"));
 
         List<String> xList = new ArrayList<>();
         List<List<SeriesValue>> yList = new ArrayList<>();

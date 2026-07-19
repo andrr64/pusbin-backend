@@ -101,11 +101,12 @@ public class ImportService {
 
                 try (InputStream is = file.getInputStream();
                      BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-                     CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT
-                             .withDelimiter(delimiter)
-                             .withFirstRecordAsHeader()
-                             .withIgnoreHeaderCase()
-                             .withTrim())) {
+                     CSVParser csvParser = new CSVParser(reader, CSVFormat.Builder.create(CSVFormat.DEFAULT)
+                             .setDelimiter(delimiter)
+                             .setHeader()
+                             .setIgnoreHeaderCase(true)
+                             .setTrim(true)
+                             .build())) {
 
                     Map<String, Integer> headerMap = new HashMap<>();
                     Map<String, Integer> csvHeaders = csvParser.getHeaderMap();

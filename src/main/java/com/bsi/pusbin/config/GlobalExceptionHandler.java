@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice

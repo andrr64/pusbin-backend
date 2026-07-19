@@ -104,21 +104,7 @@ public class GrafikRepository {
         }
     }
 
-    private void appendFiltersForTrend(StringBuilder sql, MapSqlParameterSource params,
-            List<Integer> nomenklaturId, List<String> jenjang, List<Integer> namaJabatanId) {
-        if (nomenklaturId != null && !nomenklaturId.isEmpty()) {
-            sql.append(" AND j.id_nomenklatur IN (:nomenklaturId)");
-            params.addValue("nomenklaturId", nomenklaturId);
-        }
-        if (jenjang != null && !jenjang.isEmpty()) {
-            sql.append(" AND j.jenjang IN (:jenjang)");
-            params.addValue("jenjang", jenjang);
-        }
-        if (namaJabatanId != null && !namaJabatanId.isEmpty()) {
-            sql.append(" AND t.id_jabatan IN (:namaJabatanId)");
-            params.addValue("namaJabatanId", namaJabatanId);
-        }
-    }
+
 
     public List<RawChartRow> getSebaranAsnJenjang(
             List<Integer> instansiId, List<Integer> jenisAsnId, List<Integer> nomenklaturId,

@@ -33,6 +33,7 @@ class IamControllerTest {
     ObjectMapper objectMapper;
 
     @BeforeEach
+    @SuppressWarnings("removal")
     void setUp() {
         objectMapper = new ObjectMapper()
                 .findAndRegisterModules()

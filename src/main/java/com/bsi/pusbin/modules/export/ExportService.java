@@ -79,7 +79,7 @@ public class ExportService {
             document.add(title);
 
             Font subFont = FontFactory.getFont(FontFactory.HELVETICA, 10, new Color(100, 116, 139));
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mm", new Locale("id", "ID"));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mm", Locale.of("id", "ID"));
             String timeStr = LocalDateTime.now().format(formatter);
             Paragraph subtitle = new Paragraph("Waktu Unduh: " + timeStr, subFont);
             subtitle.setSpacingAfter(15);
@@ -263,7 +263,7 @@ public class ExportService {
     }
 
     private JFreeChart drawPieChart(String title, ChartResponse res) {
-        DefaultPieDataset dataset = new DefaultPieDataset();
+        DefaultPieDataset<String> dataset = new DefaultPieDataset<>();
         for (int i = 0; i < res.x().size(); i++) {
             String key = res.x().get(i);
             Number val = (Number) res.y().get(i);
